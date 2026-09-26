@@ -1,0 +1,22 @@
+name: Verify Al-Mursyidul Amin live URL
+
+on:
+  push:
+    paths:
+      - ".github/workflows/verify-live.yml"
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check live page
+        run: |
+          set -e
+          URL="https://dahlah7-personal-portfolio1.vercel.app/al-mursyidul-amin/"
+          HTTP=$(curl -L -sS -o /tmp/site.html -w "%{http_code}" "$URL")
+          echo "HTTP=$HTTP"
+          test "$HTTP" = "200"
+          grep -q "Al‑Mursyidul Amin" /tmp/site.html
+          grep -q "Digital Archive" /tmp/site.html
+          echo "LIVE_URL_OK=$URL"
