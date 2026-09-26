@@ -17,6 +17,11 @@ jobs:
           HTTP=$(curl -L -sS -o /tmp/site.html -w "%{http_code}" "$URL")
           echo "HTTP=$HTTP"
           test "$HTTP" = "200"
-          grep -q "Al‑Mursyidul Amin" /tmp/site.html
-          grep -q "Digital Archive" /tmp/site.html
-          echo "LIVE_URL_OK=$URL"
+          grep -q "Pusat Informasi Pesantren" /tmp/site.html
+          grep -q "Pesantren yang" /tmp/site.html
+          grep -q "Data & Arsip" /tmp/site.html
+          grep -q "Struktur Putra & Putri" /tmp/site.html
+          BYTES=$(wc -c < /tmp/site.html)
+          echo "BYTES=$BYTES"
+          test "$BYTES" -gt 80000
+          echo "LIVE_V3_OK=$URL"
