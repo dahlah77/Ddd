@@ -3,224 +3,627 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Al-Mursyidul Amin — Prototype Website</title>
-<meta name="description" content="Prototype pusat informasi digital Pondok Pesantren Al-Mursyidul Amin: sejarah, pendidikan, kehidupan santri, cabang, arsip, struktur, PSB, media dan unit usaha.">
-<meta name="theme-color" content="#083d2d">
+<title>Al‑Mursyidul Amin — Digital Archive & Information System</title>
+<meta name="description" content="Prototype premium pusat informasi digital Pondok Pesantren Al‑Mursyidul Amin: sejarah, pendidikan, kehidupan santri, cabang, data & arsip, struktur, media, unit usaha, dan PSB.">
+<meta name="theme-color" content="#071d16">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--g:#0b5b3f;--g2:#073b2b;--g3:#0d7650;--gold:#d8ae48;--cream:#fbfaf4;--paper:#fffef9;--ink:#153329;--muted:#66786f;--line:#dfe8e2;--pink:#d3518c;--shadow:0 18px 50px rgba(8,61,45,.12)}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--cream);color:var(--ink);font-family:"DM Sans",sans-serif;line-height:1.55}img{max-width:100%;display:block}a{color:inherit;text-decoration:none}.wrap{width:min(1180px,calc(100% - 36px));margin:auto}.serif,h1,h2,h3{font-family:"Libre Baskerville",serif}.eyebrow{letter-spacing:.14em;text-transform:uppercase;font-size:.74rem;font-weight:800;color:var(--gold)}.muted{color:var(--muted)}.note{font-size:.82rem;color:#6c776f}.badge{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#eef5f1;color:var(--g);font-weight:800;font-size:.73rem}.badge.gold{background:#fff4d5;color:#765919}.badge.pink{background:#fff0f7;color:#a6316a}.section{padding:76px 0}.section.alt{background:white}.section-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:28px}.section-head h2{font-size:clamp(1.75rem,3.2vw,3rem);margin:4px 0 0;line-height:1.12}.section-head p{max-width:600px;margin:0}.grid{display:grid;gap:18px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.card{background:var(--paper);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}.pad{padding:22px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--g);color:#fff;padding:12px 18px;border-radius:12px;font-weight:800;border:1px solid var(--g);cursor:pointer}.btn.ghost{background:transparent;color:var(--g)}.btn.gold{background:var(--gold);border-color:var(--gold);color:#173329}.btn.small{padding:9px 13px;font-size:.84rem}.topbar{background:#052d22;color:#d9eee5;font-size:.76rem;padding:7px 0}.topbar .wrap{display:flex;justify-content:space-between;gap:18px}.nav{position:sticky;top:0;z-index:20;background:rgba(255,254,249,.94);backdrop-filter:blur(14px);border-bottom:1px solid #e5ebe6}.nav-in{height:78px;display:flex;align-items:center;gap:24px}.brand{display:flex;align-items:center;gap:12px;min-width:265px}.brand img{width:55px;height:55px;border-radius:50%;object-fit:cover}.brand strong{display:block;font-family:"Libre Baskerville";font-size:.97rem;line-height:1.1}.brand small{font-size:.67rem;color:var(--muted)}.links{margin-left:auto;display:flex;align-items:center;gap:18px;font-size:.82rem;font-weight:700}.links a:hover{color:var(--g)}.menu{display:none;margin-left:auto;background:none;border:0;font-size:1.6rem}.hero{min-height:670px;display:grid;align-items:end;position:relative;background:linear-gradient(90deg,rgba(4,49,36,.97) 0%,rgba(4,49,36,.76) 43%,rgba(4,49,36,.12) 72%),url("https://img.youtube.com/vi/g00vB9en4_c/maxresdefault.jpg") center/cover;color:#fff}.hero:after{content:"";position:absolute;inset:auto 0 0;height:130px;background:linear-gradient(transparent,rgba(4,37,28,.65));pointer-events:none}.hero-content{padding:110px 0 84px;position:relative;z-index:2;max-width:760px}.hero h1{font-size:clamp(3rem,7vw,6.7rem);line-height:.94;margin:12px 0 18px}.hero h1 span{display:block;color:#f5d574;font-size:.38em;margin-top:18px;line-height:1.2}.hero p{font-size:1.08rem;max-width:630px;color:#ebf3ef}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}.prototype{position:absolute;right:5%;top:110px;z-index:2;background:rgba(255,244,213,.94);color:#5b4718;padding:11px 14px;border-radius:13px;font-weight:900;font-size:.75rem;max-width:240px}.stats{position:relative;margin-top:-34px;z-index:4}.stats-in{background:white;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);display:grid;grid-template-columns:repeat(4,1fr)}.stat{padding:21px;text-align:center;border-right:1px solid var(--line)}.stat:last-child{border-right:0}.stat b{font-size:1.55rem;color:var(--g2)}.stat small{display:block;color:var(--muted)}.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;position:relative}.timeline:before{content:"";position:absolute;left:8%;right:8%;top:15px;height:1px;background:#b4c9bd}.t{position:relative;padding-top:42px}.t:before{content:"";position:absolute;top:7px;left:14px;width:17px;height:17px;background:var(--g);border:4px solid #f2cf74;border-radius:50%}.t b{display:block;color:var(--g)}.media-card img,.branch img,.person img,.biz img,.activity img{width:100%;height:210px;object-fit:cover}.branch .pad h3,.biz .pad h3{margin:0 0 7px}.filterbar{position:sticky;top:79px;z-index:12;background:rgba(248,247,241,.96);backdrop-filter:blur(12px);border-block:1px solid var(--line);padding:12px 0}.filters{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.filters select,.filters button{border:1px solid #cad8d0;background:white;border-radius:10px;padding:10px 12px;color:var(--ink);font:inherit;font-size:.82rem}.filters button.active{background:var(--g);color:white;border-color:var(--g)}.daily{display:grid;grid-template-columns:repeat(7,1fr);gap:12px}.daily .item{text-align:center}.daily img{aspect-ratio:1;border-radius:50%;object-fit:cover;border:4px solid #f3dc9a;box-shadow:0 0 0 1px #c99936}.daily b{display:block;margin-top:8px;font-size:.82rem}.daily small{font-size:.72rem;color:var(--muted)}.lifegrid{grid-template-columns:repeat(4,1fr)}.life{padding:19px;border:1px solid var(--line);border-radius:16px;background:white}.life b{display:block;margin-bottom:4px}.archive-shell{display:grid;grid-template-columns:1.4fr .6fr;gap:18px}.chart{background:white;border:1px solid var(--line);border-radius:20px;padding:22px;min-height:320px}.chart svg{width:100%;height:240px}.yearboxes{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.yearbox{padding:18px;background:#f4f8f5;border-radius:15px}.yearbox b{display:block;font-size:1.35rem;color:var(--g)}.org-root{text-align:center}.leader{display:inline-flex;align-items:center;gap:14px;padding:15px 18px;background:#fff;border:2px solid #d9b657;border-radius:16px;box-shadow:var(--shadow);text-align:left}.leader img{width:82px;height:82px;border-radius:12px;object-fit:cover}.org-split{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:26px}.org-panel{border:1px solid var(--line);border-radius:20px;background:white;padding:22px}.org-panel.putri{border-color:#f1c6db}.org-panel h3{margin:0 0 16px}.dept{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.dept span{padding:11px 8px;border-radius:11px;background:#f2f7f4;font-size:.76rem;text-align:center;font-weight:700}.putri .dept span{background:#fff2f8}.teacher-list{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.teacher{padding:14px;border:1px solid var(--line);border-radius:14px;background:white}.teacher b{font-size:.85rem}.nm{display:grid;grid-template-columns:1fr 1fr;gap:18px}.org-mini{padding:22px;background:linear-gradient(145deg,#063d2d,#0b6547);color:white;border-radius:20px}.org-mini .roles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:18px}.org-mini .roles div{padding:12px;border:1px solid rgba(255,255,255,.2);border-radius:12px}.org-mini small{color:#cbe2d8}.bizgrid{grid-template-columns:repeat(3,1fr)}.biz .cover{height:180px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#e7f5ef,#fff8db);font-family:"Libre Baskerville";font-size:1.45rem;text-align:center;padding:22px}.biz .cover.pink{background:linear-gradient(145deg,#fff0f7,#fff);color:#b73e79}.biz .cover.blue{background:linear-gradient(145deg,#dff7ff,#fff);color:#17677b}.socials{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.social{padding:22px;border-radius:18px;color:white;min-height:180px;display:flex;flex-direction:column;justify-content:flex-end}.social.yt{background:linear-gradient(145deg,#451515,#a10d0d)}.social.ig{background:linear-gradient(145deg,#6a2e96,#d94e7e)}.social.tt{background:linear-gradient(145deg,#151515,#303030)}.psbsteps{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}.step{text-align:center;padding:16px 8px;background:white;border:1px solid var(--line);border-radius:14px}.step .n{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--g);color:white;font-weight:900;margin:0 auto 9px}.step b{font-size:.75rem}.source{font-size:.8rem;padding:14px 16px;border-left:3px solid var(--gold);background:#fffdf5;margin:8px 0}.warning{padding:18px;border:1px dashed #d2a03b;background:#fff7dc;border-radius:16px;color:#66511d}.footer{background:#052e22;color:#d6e9e1;padding:50px 0 26px}.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:28px}.footer h3,.footer b{color:white}.footer a{display:block;margin:6px 0;font-size:.85rem;color:#c6dbd2}.copyright{border-top:1px solid rgba(255,255,255,.12);margin-top:28px;padding-top:20px;font-size:.75rem;display:flex;justify-content:space-between;gap:15px}.modal{display:none;position:fixed;inset:0;z-index:50;background:rgba(3,22,16,.78);padding:28px;overflow:auto}.modal.open{display:grid;place-items:center}.modalbox{width:min(820px,100%);background:white;border-radius:22px;padding:28px;position:relative}.close{position:absolute;right:15px;top:12px;border:0;background:#eef4f0;border-radius:50%;width:36px;height:36px;font-size:1.2rem}
-@media(max-width:900px){.links{display:none}.menu{display:block}.links.open{display:flex;position:absolute;left:0;right:0;top:78px;background:white;padding:18px;flex-direction:column;align-items:stretch}.nav-in{position:relative}.g3,.g4,.bizgrid,.socials{grid-template-columns:1fr 1fr}.timeline{grid-template-columns:1fr 1fr}.archive-shell,.org-split,.nm{grid-template-columns:1fr}.daily{grid-template-columns:repeat(4,1fr)}.lifegrid{grid-template-columns:repeat(2,1fr)}.teacher-list{grid-template-columns:repeat(2,1fr)}.psbsteps{grid-template-columns:repeat(4,1fr)}.footer-grid{grid-template-columns:1fr 1fr}.prototype{top:92px}.hero{min-height:620px}}
-@media(max-width:600px){.topbar{display:none}.wrap{width:min(100% - 24px,1180px)}.brand{min-width:0}.brand strong{font-size:.8rem}.brand small{display:none}.nav-in{height:68px}.filterbar{top:68px}.hero{min-height:600px}.hero-content{padding-top:130px}.prototype{left:12px;right:auto;top:88px}.stats-in{grid-template-columns:1fr 1fr}.stat:nth-child(2){border-right:0}.g2,.g3,.g4,.bizgrid,.socials{grid-template-columns:1fr}.timeline{grid-template-columns:1fr}.timeline:before{display:none}.daily{grid-template-columns:repeat(2,1fr)}.lifegrid,.dept,.teacher-list{grid-template-columns:1fr 1fr}.psbsteps{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr}.copyright{display:block}.section{padding:58px 0}.section-head{display:block}.hero h1{font-size:3.2rem}}
+:root{
+  --ink:#071d16;
+  --forest:#0a3a2b;
+  --forest2:#0f553d;
+  --gold:#caa55c;
+  --gold2:#e4c984;
+  --bone:#f4f0e7;
+  --paper:#fbfaf6;
+  --white:#fff;
+  --muted:#7f897f;
+  --line:rgba(7,29,22,.14);
+  --line-light:rgba(255,255,255,.16);
+  --sans:"Manrope",system-ui,sans-serif;
+  --serif:"Cormorant Garamond",Georgia,serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--ink)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{display:block;width:100%}
+button,select{font:inherit}
+::selection{background:var(--gold2);color:var(--ink)}
+.container{width:min(1320px,calc(100% - 64px));margin:auto}
+.kicker{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--gold)}
+.display{font-family:var(--serif);font-weight:500;letter-spacing:-.045em}
+.rule{height:1px;background:var(--line)}
+.small{font-size:.78rem;line-height:1.6;color:#667168}
+.note{font-size:.73rem;line-height:1.6;color:#778178}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:14px;min-height:48px;padding:0 18px;border:1px solid currentColor;border-radius:0;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;transition:.25s ease}
+.btn:hover{transform:translateY(-2px)}
+.btn.dark{background:var(--ink);color:var(--white);border-color:var(--ink)}
+.btn.light{color:var(--white)}
+.btn.gold{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.arrow{font-size:1rem;transition:.2s}.btn:hover .arrow{transform:translateX(4px)}
+#progress{position:fixed;left:0;top:0;height:2px;background:var(--gold2);z-index:100;width:0}
+
+.nav{
+  position:fixed;inset:0 0 auto;z-index:50;height:86px;
+  color:white;transition:.35s ease;
+}
+.nav.scrolled{height:74px;background:rgba(7,29,22,.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--line-light)}
+.nav-inner{height:100%;display:flex;align-items:center}
+.brand{display:flex;align-items:center;gap:13px}
+.brand-mark{width:48px;height:48px;border-radius:50%;overflow:hidden;border:1px solid rgba(255,255,255,.38);background:#fff}
+.brand-mark img{height:100%;object-fit:cover}
+.brand-type strong{display:block;font-family:var(--serif);font-size:1.05rem;letter-spacing:.02em}
+.brand-type span{display:block;font-size:.56rem;letter-spacing:.15em;text-transform:uppercase;opacity:.68}
+.nav-links{margin-left:auto;display:flex;gap:26px;align-items:center;font-size:.72rem;letter-spacing:.05em}
+.nav-links a{position:relative;padding:12px 0;opacity:.84}
+.nav-links a:after{content:"";position:absolute;left:0;right:100%;bottom:6px;height:1px;background:var(--gold);transition:.25s}
+.nav-links a:hover{opacity:1}.nav-links a:hover:after{right:0}
+.nav-cta{margin-left:26px;border:1px solid rgba(255,255,255,.35);padding:11px 16px;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase}
+.mobile-toggle{display:none;margin-left:auto;border:0;background:none;color:white;font-size:1.6rem}
+
+.hero{height:100svh;min-height:760px;position:relative;display:flex;align-items:flex-end;color:white;background:#071d16;overflow:hidden}
+.hero-media{position:absolute;inset:0}
+.hero-media:after{content:"";position:absolute;inset:0;background:
+  linear-gradient(90deg,rgba(5,23,17,.92) 0%,rgba(5,23,17,.68) 38%,rgba(5,23,17,.17) 67%,rgba(5,23,17,.34) 100%),
+  linear-gradient(0deg,rgba(5,23,17,.86) 0%,transparent 35%,rgba(5,23,17,.22) 100%)}
+.hero-media img{height:100%;object-fit:cover;transform:scale(1.04);animation:heroDrift 18s ease-in-out infinite alternate}
+@keyframes heroDrift{to{transform:scale(1.1) translateX(-1.2%)}}
+.hero-grain{position:absolute;inset:0;opacity:.08;mix-blend-mode:soft-light;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E")}
+.hero-content{position:relative;z-index:3;padding:0 0 72px;width:100%}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,.55fr);gap:80px;align-items:end}
+.hero h1{margin:16px 0 24px;font-size:clamp(4.8rem,9vw,9.5rem);line-height:.77;max-width:980px}
+.hero h1 span{display:block;font-size:.31em;letter-spacing:.02em;color:var(--gold2);margin-top:26px}
+.hero-lede{max-width:650px;font-size:1rem;line-height:1.8;color:rgba(255,255,255,.76)}
+.hero-actions{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+.hero-aside{border-left:1px solid rgba(255,255,255,.25);padding-left:28px}
+.hero-aside strong{font-family:var(--serif);font-weight:500;font-size:2.3rem;line-height:1}
+.hero-aside p{font-size:.77rem;line-height:1.7;color:rgba(255,255,255,.62)}
+.hero-index{margin-top:35px;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.18)}
+.hero-index div{background:rgba(7,29,22,.62);backdrop-filter:blur(10px);padding:16px}
+.hero-index b{display:block;font-family:var(--serif);font-size:1.45rem;font-weight:500}.hero-index span{font-size:.62rem;text-transform:uppercase;letter-spacing:.11em;opacity:.62}
+
+.intro{background:var(--bone);padding:100px 0 110px}
+.intro-grid{display:grid;grid-template-columns:.8fr 1.4fr;gap:110px}
+.intro h2{font-size:clamp(3.6rem,6vw,6.7rem);line-height:.9;margin:4px 0}
+.intro-copy{padding-top:20px}
+.intro-copy p{font-family:var(--serif);font-size:clamp(1.75rem,2.7vw,3rem);line-height:1.12;margin:0 0 28px}
+.intro-copy .meta{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;border-top:1px solid var(--line);padding-top:24px}
+.intro-copy .meta b{font-family:var(--serif);font-size:2rem;font-weight:500;display:block}
+.intro-copy .meta span{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:#707970}
+
+.history{background:var(--ink);color:white;padding:120px 0}
+.history-head{display:grid;grid-template-columns:.75fr 1.25fr;gap:100px;align-items:end;margin-bottom:70px}
+.history-head h2{font-size:clamp(4rem,7vw,7rem);line-height:.84;margin:0}
+.history-head p{max-width:560px;color:rgba(255,255,255,.56);line-height:1.8}
+.history-track{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid rgba(255,255,255,.2)}
+.history-item{min-height:300px;padding:28px 22px 0 0;border-right:1px solid rgba(255,255,255,.1);position:relative}
+.history-item:before{content:"";width:9px;height:9px;border-radius:50%;background:var(--gold);position:absolute;top:-5px;left:0}
+.history-item .year{font-family:var(--serif);font-size:2rem;color:var(--gold2)}
+.history-item h3{font-family:var(--serif);font-weight:500;font-size:1.7rem;margin:24px 0 10px}
+.history-item p{font-size:.77rem;color:rgba(255,255,255,.5);line-height:1.65;padding-right:20px}
+
+.portraits{background:var(--paper);padding:120px 0}
+.portraits-grid{display:grid;grid-template-columns:1.12fr .88fr;gap:80px;align-items:start}
+.portrait-large{position:relative}
+.portrait-large img{height:720px;object-fit:cover;filter:saturate(.78) contrast(1.04)}
+.portrait-caption{position:absolute;left:0;right:0;bottom:0;color:white;padding:55px 36px 32px;background:linear-gradient(transparent,rgba(0,0,0,.75))}
+.portrait-caption h3{font-size:3rem;font-weight:500;margin:0}
+.portrait-caption span{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:#e8d6a8}
+.portrait-story{padding-top:50px}
+.portrait-story h2{font-size:clamp(3.5rem,5vw,5.8rem);line-height:.9;margin:10px 0 26px}
+.portrait-story p{color:#5f6b63;line-height:1.9}
+.quote{font-family:var(--serif);font-size:2rem;line-height:1.25;border-left:1px solid var(--gold);padding-left:24px;margin:44px 0}
+.portrait-small{margin-top:60px;display:grid;grid-template-columns:.55fr 1fr;gap:22px;align-items:end}
+.portrait-small img{height:310px;object-fit:cover}
+.portrait-small h3{font-size:2rem;margin:0 0 10px}
+
+.campuses{background:#ece7dc;padding:120px 0}
+.campuses-title{display:flex;justify-content:space-between;align-items:end;margin-bottom:54px}
+.campuses-title h2{font-size:clamp(4rem,7vw,7rem);line-height:.84;margin:0}
+.campus{display:grid;grid-template-columns:160px 1fr 1fr;gap:28px;border-top:1px solid var(--line);padding:28px 0;align-items:center}
+.campus:last-child{border-bottom:1px solid var(--line)}
+.campus .num{font-family:var(--serif);font-size:5rem;color:rgba(7,29,22,.2)}
+.campus h3{font-size:2.1rem;margin:0 0 8px;font-weight:500}
+.campus .place{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#788076}
+.campus img{height:240px;object-fit:cover;filter:saturate(.86)}
+.campus:hover img{filter:saturate(1)}
+
+.life-section{background:var(--paper)}
+.life-hero{display:grid;grid-template-columns:1fr 1fr;min-height:760px}
+.life-image{position:sticky;top:0;height:100vh;min-height:760px}
+.life-image img{height:100%;object-fit:cover}
+.life-copy{padding:120px max(7vw,60px);display:flex;flex-direction:column;justify-content:center}
+.life-copy h2{font-size:clamp(4rem,6vw,6rem);line-height:.88;margin:10px 0 32px}
+.schedule{margin-top:38px}
+.schedule-row{display:grid;grid-template-columns:86px 1fr;gap:24px;padding:17px 0;border-top:1px solid var(--line)}
+.schedule-row:last-child{border-bottom:1px solid var(--line)}
+.schedule-row time{font-family:var(--serif);font-size:1.55rem;color:var(--forest2)}
+.schedule-row div b{display:block;font-size:.84rem}.schedule-row div span{font-size:.74rem;color:#7b837c}
+.life-note{margin-top:22px;font-size:.7rem;color:#858d87}
+
+.education{background:var(--forest);color:white;padding:120px 0}
+.education-head{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:end;margin-bottom:70px}
+.education h2{font-size:clamp(4rem,7vw,7rem);line-height:.84;margin:0}
+.education-head p{color:rgba(255,255,255,.6);line-height:1.8}
+.edu-row{display:grid;grid-template-columns:170px 1fr 1fr;gap:30px;align-items:start;padding:34px 0;border-top:1px solid rgba(255,255,255,.16)}
+.edu-row:last-child{border-bottom:1px solid rgba(255,255,255,.16)}
+.edu-row .roman{font-family:var(--serif);font-size:4rem;color:var(--gold2)}
+.edu-row h3{font-size:2rem;font-weight:500;margin:0 0 10px}
+.edu-row p{color:rgba(255,255,255,.55);font-size:.8rem;line-height:1.8;margin:0}
+.edu-meta{display:flex;flex-wrap:wrap;gap:10px}
+.edu-meta span{border:1px solid rgba(255,255,255,.2);padding:8px 10px;font-size:.65rem;text-transform:uppercase;letter-spacing:.09em}
+
+.archive{background:var(--bone);padding:120px 0}
+.archive-top{display:grid;grid-template-columns:.75fr 1.25fr;gap:90px;align-items:start}
+.archive h2{font-size:clamp(4rem,7vw,7rem);line-height:.84;margin:8px 0}
+.archive-copy{padding-top:18px}
+.archive-copy p{font-family:var(--serif);font-size:2rem;line-height:1.25;margin:0;color:#31463d}
+.data-viz{margin-top:70px;background:var(--paper);border:1px solid var(--line)}
+.data-toolbar{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.data-toolbar select,.data-toolbar button{border:1px solid var(--line);background:transparent;padding:10px 12px;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase}
+.data-toolbar button.active{background:var(--ink);color:white}
+.data-grid{display:grid;grid-template-columns:1.35fr .65fr}
+.chart-wrap{padding:36px;border-right:1px solid var(--line)}
+.chart-title{display:flex;justify-content:space-between;align-items:end;margin-bottom:20px}
+.chart-title h3{font-size:2rem;margin:0}.chart-title span{font-size:.7rem;color:#758078}
+.chart-wrap svg{width:100%;height:auto}
+.data-side{padding:28px;display:flex;flex-direction:column;justify-content:space-between}
+.data-side .big{font-family:var(--serif);font-size:5rem;line-height:.8}
+.data-side .label{font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;color:#788279}
+.data-warning{margin-top:26px;border-left:2px solid var(--gold);padding:0 0 0 18px;font-size:.73rem;line-height:1.7;color:#6c746e}
+.time-machine{margin-top:70px}
+.time-machine h3{font-size:2.4rem;margin:0 0 22px}
+.year-line{display:grid;grid-template-columns:repeat(8,1fr);border-top:1px solid var(--line)}
+.year-btn{padding:20px 0;border:0;border-right:1px solid var(--line);background:none;text-align:left;cursor:pointer}
+.year-btn b{display:block;font-family:var(--serif);font-size:1.4rem;font-weight:500}.year-btn span{font-size:.62rem;color:#7b837d}
+.year-btn.active{color:var(--forest2);background:rgba(10,58,43,.04)}
+.year-panel{display:grid;grid-template-columns:1fr 1.2fr;gap:50px;margin-top:25px;align-items:center}
+.year-panel img{height:430px;object-fit:cover;filter:grayscale(.3)}
+.year-panel h4{font-family:var(--serif);font-size:3.4rem;font-weight:500;margin:0 0 14px}
+.year-panel p{color:#667168;line-height:1.8}
+
+.organization{background:#081f17;color:white;padding:120px 0}
+.org-head{display:grid;grid-template-columns:.9fr 1.1fr;gap:90px;align-items:end;margin-bottom:50px}
+.org-head h2{font-size:clamp(4rem,7vw,7rem);line-height:.84;margin:0}
+.org-head p{color:rgba(255,255,255,.55);line-height:1.8}
+.org-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:42px}
+.org-filters button{padding:10px 14px;background:transparent;border:1px solid rgba(255,255,255,.18);color:white;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.org-filters button.active{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.org-chart{position:relative}
+.org-leader{display:grid;grid-template-columns:150px 1fr;gap:24px;align-items:center;width:min(520px,100%);margin:0 auto;padding-bottom:50px;position:relative}
+.org-leader:after{content:"";position:absolute;width:1px;background:rgba(255,255,255,.25);height:50px;bottom:0;left:50%}
+.org-leader img{width:150px;height:180px;object-fit:cover}
+.org-leader h3{font-size:2.2rem;font-weight:500;margin:0 0 5px}.org-leader span{font-size:.68rem;color:var(--gold2);letter-spacing:.12em;text-transform:uppercase}
+.org-dual{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid rgba(255,255,255,.2)}
+.org-column{padding:34px 34px 0}.org-column:first-child{border-right:1px solid rgba(255,255,255,.2)}
+.org-column .colhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px}
+.org-column h3{font-size:2.2rem;font-weight:500;margin:0}.org-column .colhead span{font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold2)}
+.depts{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-top:1px solid rgba(255,255,255,.13)}
+.dept{padding:17px 0;border-bottom:1px solid rgba(255,255,255,.13);font-size:.76rem;color:rgba(255,255,255,.75)}
+.dept:nth-child(odd){padding-right:18px}.dept:nth-child(even){padding-left:18px;border-left:1px solid rgba(255,255,255,.13)}
+.org-archive{margin-top:80px;display:grid;grid-template-columns:.6fr 1.4fr;gap:60px}
+.org-archive h3{font-size:2.8rem;margin:0}
+.archive-list{border-top:1px solid rgba(255,255,255,.16)}
+.archive-person{display:grid;grid-template-columns:120px 1fr 1fr;padding:17px 0;border-bottom:1px solid rgba(255,255,255,.12);align-items:center}
+.archive-person span{font-size:.7rem;color:var(--gold2)}.archive-person b{font-weight:600}.archive-person em{font-style:normal;color:rgba(255,255,255,.45);font-size:.72rem}
+
+.business{background:var(--paper);padding:120px 0}
+.business-head{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:end}
+.business h2{font-size:clamp(4rem,7vw,7rem);line-height:.84;margin:0}
+.business-head p{color:#657068;line-height:1.8}
+.venture-grid{display:grid;grid-template-columns:1.4fr .8fr .8fr;grid-template-rows:360px 300px;gap:14px;margin-top:55px}
+.venture{position:relative;overflow:hidden;background:#d9ded7}
+.venture.large{grid-row:span 2}
+.venture img{height:100%;object-fit:cover;transition:.5s ease;filter:saturate(.8)}
+.venture:hover img{transform:scale(1.03);filter:saturate(1)}
+.venture .shade{position:absolute;inset:0;background:linear-gradient(transparent 40%,rgba(5,22,17,.82))}
+.venture .copy{position:absolute;left:24px;right:24px;bottom:22px;color:white}
+.venture .copy span{font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;color:#e7d19d}.venture .copy h3{font-size:2rem;font-weight:500;margin:4px 0}
+.venture.type{background:var(--forest);color:white;display:flex;flex-direction:column;justify-content:flex-end;padding:28px}
+.venture.type h3{font-size:2.5rem;margin:0 0 10px}.venture.type p{font-size:.74rem;color:rgba(255,255,255,.55)}
+
+.media{background:#000;color:white;padding:120px 0}
+.media-head{display:flex;justify-content:space-between;gap:50px;align-items:end;margin-bottom:52px}
+.media-head h2{font-size:clamp(4rem,7vw,7rem);line-height:.84;margin:0}
+.media-head p{max-width:490px;color:rgba(255,255,255,.55);line-height:1.8}
+.video-feature{display:grid;grid-template-columns:1.35fr .65fr;min-height:580px;border-top:1px solid rgba(255,255,255,.18);border-bottom:1px solid rgba(255,255,255,.18)}
+.video-feature .visual{position:relative}
+.video-feature .visual img{height:100%;min-height:580px;object-fit:cover;filter:saturate(.72) contrast(1.04)}
+.play{position:absolute;left:34px;bottom:34px;width:70px;height:70px;border:1px solid rgba(255,255,255,.6);border-radius:50%;display:grid;place-items:center;background:rgba(0,0,0,.22);font-size:1.3rem}
+.video-copy{padding:48px 0 48px 48px;display:flex;flex-direction:column;justify-content:space-between}
+.video-copy h3{font-size:3.2rem;font-weight:500;line-height:.95;margin:0 0 18px}
+.video-copy p{color:rgba(255,255,255,.52);font-size:.8rem;line-height:1.75}
+.social-links{display:grid;grid-template-columns:repeat(3,1fr);margin-top:40px;border-top:1px solid rgba(255,255,255,.17)}
+.social-links a{padding:24px 0;border-right:1px solid rgba(255,255,255,.17);display:flex;justify-content:space-between}
+.social-links a span{font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.55)}
+.social-links a b{font-family:var(--serif);font-size:1.4rem;font-weight:500}
+
+.psb{background:var(--bone);padding:120px 0}
+.psb-grid{display:grid;grid-template-columns:.78fr 1.22fr;gap:90px}
+.psb h2{font-size:clamp(4rem,7vw,7rem);line-height:.84;margin:0}
+.psb-intro{font-family:var(--serif);font-size:2rem;line-height:1.25;margin:0 0 30px}
+.steps{counter-reset:step;border-top:1px solid var(--line)}
+.step{counter-increment:step;display:grid;grid-template-columns:65px 1fr auto;align-items:center;padding:18px 0;border-bottom:1px solid var(--line)}
+.step:before{content:"0" counter(step);font-family:var(--serif);font-size:1.45rem;color:var(--gold)}
+.step b{font-size:.84rem}.step span{font-size:.7rem;color:#7e867f}
+.psb-warning{margin-top:26px;padding:18px 20px;border:1px solid rgba(202,165,92,.5);font-size:.72rem;line-height:1.7;color:#6b624c}
+
+.footer{background:var(--ink);color:white;padding:80px 0 34px}
+.footer-top{display:grid;grid-template-columns:1.3fr .7fr .7fr .7fr;gap:60px}
+.footer-logo{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.footer-logo img{width:72px;height:72px;border-radius:50%}.footer-logo h3{font-size:1.7rem;line-height:1;margin:0}
+.footer p{font-size:.73rem;color:rgba(255,255,255,.47);line-height:1.8}
+.footer-col b{font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--gold2)}
+.footer-col a{display:block;font-size:.76rem;color:rgba(255,255,255,.62);margin-top:12px}
+.footer-bottom{margin-top:60px;padding-top:22px;border-top:1px solid rgba(255,255,255,.15);display:flex;justify-content:space-between;gap:20px;font-size:.65rem;color:rgba(255,255,255,.4)}
+
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s ease}
+.reveal.visible{opacity:1;transform:none}
+
+@media(max-width:1050px){
+  .container{width:min(100% - 40px,1320px)}
+  .nav-links,.nav-cta{display:none}.mobile-toggle{display:block}
+  .nav-links.open{position:absolute;top:74px;left:20px;right:20px;display:flex;flex-direction:column;align-items:flex-start;background:#071d16;padding:24px;border:1px solid var(--line-light)}
+  .hero-grid,.intro-grid,.history-head,.portraits-grid,.education-head,.archive-top,.org-head,.org-archive,.business-head,.psb-grid{grid-template-columns:1fr;gap:45px}
+  .hero-aside{display:none}
+  .hero{min-height:700px}
+  .history-track{grid-template-columns:1fr 1fr 1fr}
+  .campus{grid-template-columns:90px 1fr}.campus img{grid-column:2}
+  .life-hero{grid-template-columns:1fr}.life-image{position:relative;height:70vh;min-height:520px}.life-copy{padding:80px 40px}
+  .data-grid{grid-template-columns:1fr}.chart-wrap{border-right:0;border-bottom:1px solid var(--line)}
+  .year-line{grid-template-columns:repeat(4,1fr)}.year-panel{grid-template-columns:1fr}
+  .venture-grid{grid-template-columns:1fr 1fr;grid-template-rows:360px 300px 300px}.venture.large{grid-row:span 1;grid-column:span 2}
+  .video-feature{grid-template-columns:1fr}.video-copy{padding:36px 0}
+}
+@media(max-width:700px){
+  .container{width:min(100% - 24px,1320px)}
+  .nav{height:70px}.brand-type strong{font-size:.86rem}.brand-type span{font-size:.48rem}.brand-mark{width:42px;height:42px}
+  .hero{min-height:720px}.hero-content{padding-bottom:38px}.hero h1{font-size:4.7rem}.hero-index{grid-template-columns:1fr}.hero-index div:nth-child(n+2){display:none}
+  .intro,.history,.portraits,.campuses,.education,.archive,.organization,.business,.media,.psb{padding:82px 0}
+  .intro-copy .meta{grid-template-columns:1fr}
+  .history-track{grid-template-columns:1fr}.history-item{min-height:220px}
+  .portrait-large img{height:560px}.portrait-small{grid-template-columns:1fr}.portrait-small img{height:400px}
+  .campuses-title{display:block}.campus{grid-template-columns:55px 1fr;gap:15px}.campus .num{font-size:3rem}.campus img{height:190px}
+  .life-copy{padding:65px 24px}.schedule-row{grid-template-columns:68px 1fr}
+  .edu-row{grid-template-columns:70px 1fr}.edu-row .edu-meta{grid-column:2}.edu-row .roman{font-size:2.8rem}
+  .data-toolbar{align-items:stretch}.data-toolbar select,.data-toolbar button{width:100%}
+  .year-line{grid-template-columns:1fr 1fr}.year-panel img{height:300px}
+  .org-dual{grid-template-columns:1fr}.org-column:first-child{border-right:0;border-bottom:1px solid rgba(255,255,255,.2)}.org-column{padding:30px 0}
+  .org-leader{grid-template-columns:110px 1fr}.org-leader img{width:110px;height:145px}
+  .archive-person{grid-template-columns:80px 1fr}.archive-person em{grid-column:2}
+  .venture-grid{display:grid;grid-template-columns:1fr;grid-template-rows:none}.venture,.venture.large{grid-column:auto;grid-row:auto;min-height:330px}
+  .media-head{display:block}.video-feature .visual img{min-height:380px;height:380px}.social-links{grid-template-columns:1fr}.social-links a{border-right:0;border-bottom:1px solid rgba(255,255,255,.17)}
+  .footer-top{grid-template-columns:1fr 1fr}.footer-top>div:first-child{grid-column:1/-1}.footer-bottom{display:block}
+}
 </style>
 </head>
 <body>
-<div class="topbar"><div class="wrap"><span>Prototype Digital Home Al‑Mursyidul Amin</span><span>Data publik + arsip terverifikasi • final menunggu validasi pondok</span></div></div>
-<nav class="nav"><div class="wrap nav-in">
-<a class="brand" href="#beranda"><img src="data:image/webp;base64,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" alt="Logo Al-Mursyidul Amin"><span><strong>PONDOK PESANTREN<br>AL‑MURSYIDUL AMIN</strong><small>GAMBUT • KALIMANTAN SELATAN</small></span></a>
-<div class="links" id="links"><a href="#tentang">Tentang</a><a href="#pendidikan">Pendidikan</a><a href="#kehidupan">Kehidupan</a><a href="#cabang">Cabang</a><a href="#arsip">Data & Arsip</a><a href="#struktur">Struktur</a><a href="#usaha">Unit Usaha</a><a href="#psb">PSB</a><a href="#media">Media</a></div>
-<button class="menu" id="menu" aria-label="Menu">☰</button>
-</div></nav>
+<div id="progress"></div>
 
-<header class="hero" id="beranda"><div class="prototype">PROTOTIPE PENAWARAN<br><span style="font-weight:600">Belum menjadi situs resmi pondok.</span></div><div class="wrap hero-content">
-<div class="eyebrow">Pondok Pesantren • Gambut • Kalimantan Selatan</div>
-<h1>AL‑MURSYIDUL AMIN<span>Ilmu. Adab. Khidmah.</span></h1>
-<p>Pusat informasi digital yang menyatukan sejarah, pendidikan, kehidupan santri, cabang, organisasi, data tahunan, media dakwah, unit usaha, PSB, dan arsip lintas generasi.</p>
-<div class="actions"><a class="btn gold" href="#psb">Jelajahi PSB →</a><a class="btn" href="#tentang">Jelajahi Pesantren</a></div>
-</div></header>
+<nav class="nav" id="nav">
+  <div class="container nav-inner">
+    <a href="#home" class="brand">
+      <span class="brand-mark"><img src="data:image/webp;base64,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" alt="Logo Pondok Pesantren Al-Mursyidul Amin"></span>
+      <span class="brand-type"><strong>AL‑MURSYIDUL AMIN</strong><span>Gambut · Kalimantan Selatan</span></span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#tentang">Tentang</a><a href="#cabang">Cabang</a><a href="#kehidupan">Kehidupan</a><a href="#pendidikan">Pendidikan</a><a href="#arsip">Data & Arsip</a><a href="#struktur">Struktur</a><a href="#usaha">Unit Usaha</a><a href="#media">Media</a>
+    </div>
+    <a href="#psb" class="nav-cta">Penerimaan Santri</a>
+    <button class="mobile-toggle" id="mobileToggle" aria-label="Buka navigasi">☰</button>
+  </div>
+</nav>
 
-<div class="stats"><div class="wrap stats-in">
-<div class="stat"><b>1988</b><small>Tahun berdiri pondok</small></div>
-<div class="stat"><b>A</b><small>Akreditasi NPSN induk, data 2025</small></div>
-<div class="stat"><b>3</b><small>Lokasi/cabang publik terverifikasi</small></div>
-<div class="stat"><b>38+</b><small>Tahun perjalanan lembaga</small></div>
-</div></div>
+<header class="hero" id="home">
+  <div class="hero-media"><img src="https://img.youtube.com/vi/6cU3E-EYNrM/maxresdefault.jpg" alt="Dokumentasi Pondok Pesantren Al-Mursyidul Amin"><div class="hero-grain"></div></div>
+  <div class="container hero-content">
+    <div class="hero-grid">
+      <div>
+        <div class="kicker">Pondok Pesantren · Berdiri 1988</div>
+        <h1 class="display">Al‑Mursyidul<br>Amin<span>Ilmu · Adab · Khidmah</span></h1>
+        <p class="hero-lede">Satu rumah digital untuk sejarah, pendidikan, kehidupan santri, cabang, arsip lintas generasi, struktur organisasi, dakwah, dan kemandirian pesantren.</p>
+        <div class="hero-actions"><a class="btn gold" href="#tentang">Masuk ke sejarah <span class="arrow">→</span></a><a class="btn light" href="#psb">Penerimaan santri</a></div>
+      </div>
+      <aside class="hero-aside">
+        <div class="kicker">Digital Archive</div>
+        <strong>1988—2026</strong>
+        <p>Prototype premium untuk menyatukan data yang saat ini tersebar di arsip, kanal media, dokumen pemerintah, dan dokumentasi pondok.</p>
+        <div class="hero-index"><div><b>03</b><span>Lokasi terverifikasi</span></div><div><b>A</b><span>Akreditasi induk</span></div><div><b>38+</b><span>Tahun perjalanan</span></div></div>
+      </aside>
+    </div>
+  </div>
+</header>
 
-<section class="section" id="tentang"><div class="wrap">
-<div class="section-head"><div><div class="eyebrow">Sejarah & Kepemimpinan</div><h2>Dari Madrasah Takhassus menuju pesantren lintas generasi</h2></div><p class="muted">Informasi sejarah dirangkum dari arsip penelitian dan data pemerintah. Foto memakai dokumentasi publik yang tersedia di kanal resmi/terkait.</p></div>
-<div class="timeline">
-<div class="t"><b>1981/82</b><strong>Madrasah Takhassus</strong><p class="note">Jejak awal pendidikan diniyah sebelum pondok berdiri.</p></div>
-<div class="t"><b>1985</b><strong>Pembangunan</strong><p class="note">Tahap pembangunan pesantren mulai berlangsung.</p></div>
-<div class="t"><b>16 Agustus 1988</b><strong>Al‑Mursyidul Amin berdiri</strong><p class="note">Bertepatan 1 Muharram 1408 H.</p></div>
-<div class="t"><b>1988–2013</b><strong>KH. Ahmad Bakeri</strong><p class="note">Pendiri dan pimpinan pada periode awal.</p></div>
-<div class="t"><b>2013–sekarang</b><strong>H. M. Rasyid Ridha</strong><p class="note">Melanjutkan kepemimpinan pondok.</p></div>
-</div>
-<div class="grid g2" style="margin-top:28px">
-<article class="card person"><img src="https://img.youtube.com/vi/yTE7zN4aDOw/maxresdefault.jpg" alt="Dokumentasi publik KH Ahmad Bakeri" loading="lazy"><div class="pad"><span class="badge gold">PENDIRI</span><h3>KH. Ahmad Bakeri</h3><p class="muted">Pendiri Pondok Pesantren Al‑Mursyidul Amin. Visual diambil dari dokumentasi video publik yang membahas beliau.</p><a class="btn small ghost" target="_blank" href="https://www.youtube.com/watch?v=yTE7zN4aDOw">Buka dokumentasi ↗</a></div></article>
-<article class="card person"><img src="https://img.youtube.com/vi/g00vB9en4_c/maxresdefault.jpg" alt="Dokumentasi publik H M Rasyid Ridha" loading="lazy"><div class="pad"><span class="badge">PIMPINAN SAAT INI</span><h3>H. M. Rasyid Ridha</h3><p class="muted">Pimpinan pondok yang juga tercantum sebagai kepala pada data sekolah pemerintah untuk NPSN 69950145.</p><a class="btn small ghost" target="_blank" href="https://www.youtube.com/watch?v=g00vB9en4_c">Buka kajian publik ↗</a></div></article>
-</div>
-</div></section>
+<section class="intro reveal" id="tentang">
+  <div class="container intro-grid">
+    <div><div class="kicker">01 / Identitas</div><h2 class="display">Bukan sekadar sekolah.</h2></div>
+    <div class="intro-copy">
+      <p>Al‑Mursyidul Amin dibangun sebagai lingkungan pendidikan Islam: tempat ilmu dipelajari, adab dibiasakan, dan kehidupan bersama membentuk karakter.</p>
+      <div class="meta">
+        <div><b>1988</b><span>Tahun berdiri</span></div>
+        <div><b>Gambut</b><span>Kampus induk</span></div>
+        <div><b>3 lokasi</b><span>Jejak publik terverifikasi</span></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-<section class="section alt" id="cabang"><div class="wrap">
-<div class="section-head"><div><div class="eyebrow">Cabang</div><h2>Tiga lokasi yang dapat diverifikasi</h2></div><p class="muted">Struktur final per cabang akan dipisahkan lagi ke Putra/Putri untuk seluruh bidang, bukan hanya pendidikan.</p></div>
-<div class="grid g3">
-<article class="card branch"><img src="https://img.youtube.com/vi/6cU3E-EYNrM/maxresdefault.jpg" loading="lazy"><div class="pad"><span class="badge">INDUK</span><h3>Al‑Mursyidul Amin Gambut</h3><p>Jl. Beringin No. 211 RT 02 RW 01, Desa Makmur, Kecamatan Gambut, Kabupaten Banjar.</p></div></article>
-<article class="card branch"><img src="https://img.youtube.com/vi/FebDGHDvBM0/maxresdefault.jpg" loading="lazy"><div class="pad"><span class="badge">CABANG 2</span><h3>Al‑Mursyidul Amin 2 Bati‑Bati</h3><p>Desa Nusa Indah, Kecamatan Bati‑Bati, Kabupaten Tanah Laut. Jejak pembangunan masjid terdokumentasi publik sejak 2021.</p></div></article>
-<article class="card branch"><img src="https://img.youtube.com/vi/g00vB9en4_c/maxresdefault.jpg" loading="lazy"><div class="pad"><span class="badge">CABANG 3</span><h3>Al‑Mursyidul Amin 3 Sungai Andai</h3><p>Kawasan Sungai Andai, Banjarmasin Utara. Peletakan batu pertama diberitakan Pemerintah Kota Banjarmasin pada 2022.</p></div></article>
-</div>
-</div></section>
+<section class="history">
+  <div class="container">
+    <div class="history-head reveal"><div><div class="kicker">02 / Sejarah</div><h2 class="display">Jejak<br>perjalanan.</h2></div><p>Dari Madrasah Takhassus hingga berkembang menjadi pesantren dengan beberapa kawasan. Timeline di bawah hanya memuat tonggak yang mempunyai jejak dokumentasi publik; detail final tetap mengikuti arsip resmi pondok.</p></div>
+    <div class="history-track">
+      <div class="history-item reveal"><div class="year">1981/82</div><h3>Madrasah Takhassus</h3><p>Jejak awal pendidikan diniyah yang menjadi bagian dari perjalanan menuju berdirinya pesantren.</p></div>
+      <div class="history-item reveal"><div class="year">1985</div><h3>Pembangunan</h3><p>Tahap pembangunan pesantren mulai berlangsung di Desa Makmur, Gambut.</p></div>
+      <div class="history-item reveal"><div class="year">1988</div><h3>Al‑Mursyidul Amin</h3><p>Pondok berdiri pada 16 Agustus 1988, bertepatan dengan 1 Muharram 1408 H.</p></div>
+      <div class="history-item reveal"><div class="year">2013</div><h3>Estafet</h3><p>Kepemimpinan diteruskan oleh H. M. Rasyid Ridha setelah masa KH. Ahmad Bakeri.</p></div>
+      <div class="history-item reveal"><div class="year">Kini</div><h3>Tiga kawasan</h3><p>Jejak publik menunjukkan pengembangan Gambut, Bati‑Bati, dan Sungai Andai.</p></div>
+    </div>
+  </div>
+</section>
 
-<div class="filterbar"><div class="wrap filters">
-<b style="margin-right:5px">Filter ekosistem:</b>
-<select id="campus"><option>Semua Cabang</option><option>Gambut</option><option>Bati-Bati</option><option>Sungai Andai</option></select>
-<select id="year"><option>2026</option><option>2025</option><option>2024</option><option>2016</option><option>1988</option></select>
-<button class="gender active" data-g="semua">Semua</button><button class="gender" data-g="putra">Putra</button><button class="gender" data-g="putri">Putri</button>
-<span class="note" id="filterText">Menampilkan seluruh ekosistem.</span>
-</div></div>
+<section class="portraits">
+  <div class="container portraits-grid">
+    <div class="portrait-large reveal">
+      <img src="https://img.youtube.com/vi/yTE7zN4aDOw/maxresdefault.jpg" alt="Dokumentasi publik KH Ahmad Bakeri" loading="lazy">
+      <div class="portrait-caption"><span>Pendiri</span><h3>KH. Ahmad Bakeri</h3></div>
+    </div>
+    <div class="portrait-story reveal">
+      <div class="kicker">Kepemimpinan</div>
+      <h2 class="display">Warisan yang diteruskan.</h2>
+      <p>Bagian kepemimpinan dibuat seperti arsip editorial, bukan kumpulan kartu profil. Foto yang digunakan berasal dari dokumentasi publik yang tersedia, sedangkan profil resmi dapat diganti dengan foto resolusi tinggi dari pondok saat proyek disetujui.</p>
+      <div class="quote">“Satu generasi meninggalkan amanah; generasi berikutnya meneruskan khidmah.”</div>
+      <div class="portrait-small">
+        <img src="https://img.youtube.com/vi/g00vB9en4_c/maxresdefault.jpg" alt="Dokumentasi publik H M Rasyid Ridha" loading="lazy">
+        <div><div class="kicker">Pimpinan</div><h3>H. M. Rasyid Ridha</h3><p class="small">Pimpinan Al‑Mursyidul Amin pada periode sekarang. Struktur lengkap di bawahnya ditampilkan secara hierarkis, bukan sekadar daftar nama.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-<section class="section" id="pendidikan"><div class="wrap">
-<div class="section-head"><div><div class="eyebrow">Pendidikan</div><h2>Pendidikan diniyah, formal, dan pembinaan karakter</h2></div><p class="muted">Nomenklatur jenjang final mengikuti data resmi pondok. PDF Wustha/Ulya dan nomenklatur historis tidak dicampur tanpa verifikasi.</p></div>
-<div class="grid g3">
-<div class="card pad"><span class="badge">DINIAH</span><h3>Kajian Kitab & Halaqah</h3><p class="muted">Tradisi pengajian kitab, bandongan/sorogan, tauhid, fikih, adab, dan ilmu fardhu ‘ain sebagai bagian identitas pesantren.</p></div>
-<div class="card pad"><span class="badge">FORMAL</span><h3>PDF Wustha & Ulya</h3><p class="muted">Data publik Kementerian Agama mencatat Pendidikan Diniyah Formal Al‑Mursyidul Amin pada jenjang Wustha dan Ulya.</p></div>
-<div class="card pad"><span class="badge">KARAKTER</span><h3>Asrama & Pembiasaan</h3><p class="muted">Pembinaan disiplin, ibadah berjamaah, kebersamaan, tanggung jawab, organisasi, dan kemandirian santri.</p></div>
-</div>
-</div></section>
+<section class="campuses" id="cabang">
+  <div class="container">
+    <div class="campuses-title reveal"><div><div class="kicker">03 / Cabang</div><h2 class="display">Tiga kawasan.<br>Satu khidmah.</h2></div><p class="small">Struktur final setiap cabang dapat mempunyai data Putra dan Putri sendiri untuk seluruh bidang operasional.</p></div>
+    <article class="campus reveal"><div class="num">01</div><div><div class="place">Kabupaten Banjar</div><h3>Gambut</h3><p class="small">Kampus induk di Desa Makmur, Kecamatan Gambut. Pusat sejarah, pendidikan, dakwah, administrasi, dan kehidupan santri.</p></div><img src="https://img.youtube.com/vi/6cU3E-EYNrM/maxresdefault.jpg" loading="lazy" alt="Al-Mursyidul Amin Gambut"></article>
+    <article class="campus reveal"><div class="num">02</div><div><div class="place">Kabupaten Tanah Laut</div><h3>Bati‑Bati</h3><p class="small">Pengembangan Al‑Mursyidul Amin 2 di kawasan Nusa Indah, Bati‑Bati, termasuk pembangunan fasilitas ibadah dan asrama.</p></div><img src="https://img.youtube.com/vi/FebDGHDvBM0/maxresdefault.jpg" loading="lazy" alt="Al-Mursyidul Amin Bati-Bati"></article>
+    <article class="campus reveal"><div class="num">03</div><div><div class="place">Kota Banjarmasin</div><h3>Sungai Andai</h3><p class="small">Kawasan Al‑Mursyidul Amin 3 di Banjarmasin Utara yang dikembangkan sebagai bagian ekspansi pendidikan dan asrama.</p></div><img src="https://img.youtube.com/vi/gf9ksKVWfHI/maxresdefault.jpg" loading="lazy" alt="Al-Mursyidul Amin Sungai Andai"></article>
+  </div>
+</section>
 
-<section class="section alt" id="kehidupan"><div class="wrap">
-<div class="section-head"><div><div class="eyebrow">Kehidupan Santri</div><h2>24 jam menjadi santri</h2></div><div class="warning">Jadwal di bawah adalah rekonstruksi dari arsip penelitian lama. Wajib diverifikasi pengurus sebelum situs resmi diluncurkan.</div></div>
-<div class="daily">
-<div class="item"><img src="https://img.youtube.com/vi/T16Cs8_CFlc/mqdefault.jpg"><b>04.00</b><small>Bangun & persiapan</small></div>
-<div class="item"><img src="https://img.youtube.com/vi/1IbdIHXCDt0/mqdefault.jpg"><b>Subuh</b><small>Jamaah, wirid, Dalail</small></div>
-<div class="item"><img src="https://img.youtube.com/vi/6cU3E-EYNrM/mqdefault.jpg"><b>Pagi</b><small>Pengajian & kelas</small></div>
-<div class="item"><img src="https://img.youtube.com/vi/1IbdIHXCDt0/mqdefault.jpg"><b>Dzuhur</b><small>Jamaah & aktivitas siang</small></div>
-<div class="item"><img src="https://img.youtube.com/vi/6cU3E-EYNrM/mqdefault.jpg"><b>Ashar</b><small>Wirid, kajian, kegiatan</small></div>
-<div class="item"><img src="https://img.youtube.com/vi/g00vB9en4_c/mqdefault.jpg"><b>Maghrib</b><small>Jamaah & pengajian</small></div>
-<div class="item"><img src="https://img.youtube.com/vi/1IbdIHXCDt0/mqdefault.jpg"><b>Malam</b><small>Isya, kajian, belajar</small></div>
-</div>
-<div class="grid lifegrid" style="margin-top:28px">
-<div class="life"><b>Pengasuhan</b><span class="note">Musyrif/musyrifah, kedisiplinan, tata tertib.</span></div>
-<div class="life"><b>Asrama</b><span class="note">Kamar, kebersihan, fasilitas dan pengelolaan kompleks.</span></div>
-<div class="life"><b>Ibadah & Musholla</b><span class="note">Jamaah, wirid, kajian, pengaturan kegiatan.</span></div>
-<div class="life"><b>Keamanan</b><span class="note">Ketertiban, penjagaan dan kontrol lingkungan.</span></div>
-<div class="life"><b>Kesehatan</b><span class="note">Layanan kesehatan santri dan penanganan dasar.</span></div>
-<div class="life"><b>Konsumsi</b><span class="note">Dapur, makan harian dan distribusi konsumsi.</span></div>
-<div class="life"><b>Olahraga & Ekstrakurikuler</b><span class="note">Kegiatan fisik, keterampilan, seni dan minat.</span></div>
-<div class="life"><b>Administrasi</b><span class="note">Data santri, izin, surat, pembayaran dan arsip.</span></div>
-</div>
-</div></section>
+<section class="life-section" id="kehidupan">
+  <div class="life-hero">
+    <div class="life-image"><img src="https://img.youtube.com/vi/gf9ksKVWfHI/maxresdefault.jpg" alt="Kegiatan santri Al-Mursyidul Amin" loading="lazy"></div>
+    <div class="life-copy reveal">
+      <div class="kicker">04 / Kehidupan Santri</div>
+      <h2 class="display">Ritme yang membentuk.</h2>
+      <p class="small">Alih-alih deretan kartu generik, keseharian santri ditampilkan sebagai ritme waktu. Jadwal di bawah adalah rekonstruksi dari arsip penelitian lama dan akan diganti dengan jadwal resmi terbaru.</p>
+      <div class="schedule">
+        <div class="schedule-row"><time>04.00</time><div><b>Bangun & persiapan</b><span>Memulai hari sebelum Subuh.</span></div></div>
+        <div class="schedule-row"><time>Subuh</time><div><b>Jamaah, wirid & pengajian</b><span>Musholla menjadi pusat ritme pagi.</span></div></div>
+        <div class="schedule-row"><time>08.15</time><div><b>Pembelajaran</b><span>Kelas, kitab, diniyah dan kegiatan akademik.</span></div></div>
+        <div class="schedule-row"><time>Dzuhur</time><div><b>Jamaah & aktivitas siang</b><span>Istirahat, makan, dan kegiatan pondok.</span></div></div>
+        <div class="schedule-row"><time>Ashar</time><div><b>Wirid & pembinaan</b><span>Pengajian, olahraga, organisasi, keterampilan.</span></div></div>
+        <div class="schedule-row"><time>Maghrib</time><div><b>Jamaah & kajian kitab</b><span>Kembali ke ritme ibadah dan belajar.</span></div></div>
+        <div class="schedule-row"><time>Malam</time><div><b>Isya, belajar & asrama</b><span>Menutup hari dengan pembinaan dan belajar mandiri.</span></div></div>
+      </div>
+      <div class="life-note">Jadwal final wajib divalidasi pengurus untuk masing-masing cabang, jenjang, Putra, dan Putri.</div>
+    </div>
+  </div>
+</section>
 
-<section class="section" id="arsip"><div class="wrap">
-<div class="section-head"><div><div class="eyebrow">Data & Arsip</div><h2>Jejak santri dari tahun ke tahun</h2></div><p class="muted">Desain database siap menyimpan santri masuk, aktif, lulusan, guru, organisasi, dokumentasi dan struktur dari 1988 sampai tahun berjalan.</p></div>
-<div class="archive-shell">
-<div class="chart"><h3 style="margin-top:0">Statistik Tahunan</h3><p class="note">Titik yang ditampilkan hanya data publik yang berhasil ditemukan; bukan interpolasi.</p>
-<svg viewBox="0 0 700 240" role="img" aria-label="Contoh visual data publik">
-<line x1="55" y1="205" x2="670" y2="205" stroke="#cfdcd5"/><line x1="55" y1="25" x2="55" y2="205" stroke="#cfdcd5"/>
-<polyline points="120,175 340,85 570,120" fill="none" stroke="#0b5b3f" stroke-width="4"/>
-<circle cx="120" cy="175" r="7" fill="#d8ae48"/><circle cx="340" cy="85" r="7" fill="#d8ae48"/><circle cx="570" cy="120" r="7" fill="#d8ae48"/>
-<text x="94" y="228" font-size="13">1988</text><text x="314" y="228" font-size="13">2012</text><text x="544" y="228" font-size="13">2015/16</text>
-<text x="132" y="168" font-size="13">awal berdiri</text><text x="352" y="78" font-size="13">&gt;2.000 putra+putri</text><text x="582" y="113" font-size="13">948 putri</text>
-</svg>
-<div class="warning">Grafik santri masuk dan lulusan per tahun belum boleh diisi angka buatan. Setelah pondok memberikan arsip, dashboard akan menghasilkan seri 1988–sekarang secara otomatis.</div>
-</div>
-<div class="yearboxes">
-<div class="yearbox"><span class="note">2012</span><b>&gt;2.000</b><small>santri putra + putri, arsip penelitian</small></div>
-<div class="yearbox"><span class="note">2012</span><b>108</b><small>guru, arsip penelitian</small></div>
-<div class="yearbox"><span class="note">2015/16 Putri</span><b>948</b><small>santriwati</small></div>
-<div class="yearbox"><span class="note">2015/16 Putri</span><b>25</b><small>ruang kelas, arsip</small></div>
-<div class="yearbox"><span class="note">NPSN snapshot 2026</span><b>169</b><small>peserta didik pada dataset NPSN, bukan total pesantren</small></div>
-<div class="yearbox"><span class="note">Arsip penuh</span><b>1988→</b><small>siap dimigrasikan ke CMS</small></div>
-</div>
-</div>
-<div class="card pad" style="margin-top:18px">
-<div class="section-head" style="margin:0"><div><div class="eyebrow">Time Machine</div><h3 style="font-size:1.35rem;margin:5px 0">Lihat pondok pada satu tahun tertentu</h3></div><button class="btn small" onclick="openModal()">Lihat rancangan database</button></div>
-<p class="muted">Satu slider tahun akan mengubah statistik, pimpinan, guru, struktur organisasi, dokumentasi, fasilitas dan lulusan sesuai arsip pada tahun tersebut.</p>
-</div>
-</div></section>
+<section class="education" id="pendidikan">
+  <div class="container">
+    <div class="education-head reveal"><div><div class="kicker">05 / Pendidikan</div><h2 class="display">Ilmu yang<br>berlapis.</h2></div><p>Sistem pendidikan ditampilkan sebagai lapisan pengalaman: diniyah, pendidikan formal, pembinaan asrama, dan pembentukan karakter. Nomenklatur final akan mengikuti struktur resmi terbaru pondok.</p></div>
+    <div class="edu-row reveal"><div class="roman">I</div><div><h3>Pendidikan Diniyah</h3><p>Kajian kitab, tauhid, fikih, adab, bahasa Arab, dan disiplin keilmuan khas pesantren.</p></div><div class="edu-meta"><span>Kitab</span><span>Bandongan</span><span>Sorogan</span><span>Halaqah</span></div></div>
+    <div class="edu-row reveal"><div class="roman">II</div><div><h3>PDF Wustha</h3><p>Jenjang Pendidikan Diniyah Formal yang mempunyai jejak pada data Kementerian Agama.</p></div><div class="edu-meta"><span>Putra</span><span>Putri</span><span>Kelas</span><span>Guru</span></div></div>
+    <div class="edu-row reveal"><div class="roman">III</div><div><h3>PDF Ulya</h3><p>Jenjang lanjutan untuk penguatan keilmuan, pembinaan, kemandirian, dan kesiapan pengabdian.</p></div><div class="edu-meta"><span>Putra</span><span>Putri</span><span>Cabang</span><span>Arsip</span></div></div>
+  </div>
+</section>
 
-<section class="section alt" id="struktur"><div class="wrap">
-<div class="section-head"><div><div class="eyebrow">Struktur Organisasi</div><h2>Putra dan Putri sebagai dua ekosistem operasional lengkap</h2></div><p class="muted">Nama pejabat selain pimpinan tidak diarang. Bagian di bawah adalah struktur fungsional yang siap diisi berdasarkan SK resmi pondok.</p></div>
-<div class="org-root"><div class="leader"><img src="https://img.youtube.com/vi/g00vB9en4_c/mqdefault.jpg"><div><span class="badge gold">PIMPINAN PONDOK</span><h3 style="margin:6px 0 0">H. M. Rasyid Ridha</h3><small class="muted">Al‑Mursyidul Amin</small></div></div></div>
-<div class="org-split">
-<div class="org-panel"><span class="badge">PUTRA</span><h3>Seluruh Bidang Putra</h3><div class="dept">
-<span>Pendidikan</span><span>Pengasuhan</span><span>Asrama</span><span>Ibadah & Musholla</span><span>Keamanan</span><span>Kesehatan</span><span>Kebersihan</span><span>Konsumsi & Dapur</span><span>Administrasi</span><span>Kegiatan & Ekskul</span><span>Nahdatul Mutaalimin</span><span>Guru/Pengajar</span><span>PSB</span><span>Alumni</span><span>Media</span><span>Sarana Prasarana</span><span>Unit Usaha</span><span>Lainnya</span>
-</div></div>
-<div class="org-panel putri"><span class="badge pink">PUTRI</span><h3>Seluruh Bidang Putri</h3><div class="dept">
-<span>Pendidikan</span><span>Pengasuhan</span><span>Asrama</span><span>Ibadah & Musholla</span><span>Keamanan</span><span>Kesehatan</span><span>Kebersihan</span><span>Konsumsi & Dapur</span><span>Administrasi</span><span>Kegiatan & Ekskul</span><span>Nahdatul Mutaalimat</span><span>Guru/Pengajar</span><span>PSB</span><span>Alumni</span><span>Media</span><span>Sarana Prasarana</span><span>Unit Usaha</span><span>Lainnya</span>
-</div></div>
+<section class="archive" id="arsip">
+  <div class="container">
+    <div class="archive-top reveal"><div><div class="kicker">06 / Data & Arsip</div><h2 class="display">38 tahun,<br>satu arsip.</h2></div><div class="archive-copy"><p>Website ini dirancang supaya sejarah tidak berhenti menjadi tumpukan foto dan dokumen. Setiap tahun dapat ditelusuri kembali sebagai data.</p><div class="rule"></div><p class="small">Santri masuk · santri aktif · lulusan · guru · pengurus · foto angkatan · struktur · kegiatan · fasilitas · prestasi · dokumen</p></div></div>
+
+    <div class="data-viz reveal">
+      <div class="data-toolbar">
+        <select id="campusFilter"><option>Semua Cabang</option><option>Gambut</option><option>Bati‑Bati</option><option>Sungai Andai</option></select>
+        <select id="yearFilter"><option>Semua Tahun</option><option>2026</option><option>2025</option><option>2024</option><option>2016</option><option>1988</option></select>
+        <button class="gender active" data-gender="Semua">Semua</button><button class="gender" data-gender="Putra">Putra</button><button class="gender" data-gender="Putri">Putri</button>
+      </div>
+      <div class="data-grid">
+        <div class="chart-wrap">
+          <div class="chart-title"><h3 class="display">Jejak data publik</h3><span id="filterLabel">Semua Cabang · Semua · Semua Tahun</span></div>
+          <svg viewBox="0 0 900 340" aria-label="Visual data arsip">
+            <defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f553d" stop-opacity=".2"/><stop offset="1" stop-color="#0f553d" stop-opacity="0"/></linearGradient></defs>
+            <g stroke="#d8ded8" stroke-width="1"><line x1="60" y1="280" x2="850" y2="280"/><line x1="60" y1="220" x2="850" y2="220"/><line x1="60" y1="160" x2="850" y2="160"/><line x1="60" y1="100" x2="850" y2="100"/><line x1="60" y1="40" x2="850" y2="40"/></g>
+            <path d="M90 255 C220 240,250 140,380 132 S580 185,660 155 S760 110,820 95 L820 280 L90 280Z" fill="url(#fill)"/>
+            <path d="M90 255 C220 240,250 140,380 132 S580 185,660 155 S760 110,820 95" fill="none" stroke="#0a3a2b" stroke-width="3"/>
+            <g fill="#caa55c" stroke="#fbfaf6" stroke-width="4"><circle cx="90" cy="255" r="7"/><circle cx="380" cy="132" r="7"/><circle cx="660" cy="155" r="7"/><circle cx="820" cy="95" r="7"/></g>
+            <g fill="#758078" font-family="Manrope" font-size="14"><text x="72" y="310">1988</text><text x="345" y="310">2012</text><text x="620" y="310">2015/16</text><text x="790" y="310">ARSIP</text></g>
+          </svg>
+          <div class="data-warning">Grafik ini adalah representasi editorial dari titik data publik yang telah ditemukan, bukan seri statistik tahunan lengkap. Angka masuk/lulus per tahun tidak akan diisi dengan tebakan.</div>
+        </div>
+        <aside class="data-side">
+          <div><div class="label">Mode arsip</div><div class="big">1988→</div></div>
+          <div><div class="label">Yang dapat dicari</div><p class="small">Tahun akademik, cabang, Putra/Putri, jenjang, guru, struktur, organisasi santri, kegiatan, dokumentasi, fasilitas dan lulusan.</p></div>
+          <button class="btn dark" id="openArchive">Lihat skema arsip <span class="arrow">→</span></button>
+        </aside>
+      </div>
+    </div>
+
+    <div class="time-machine reveal">
+      <div class="kicker">Time Machine</div><h3 class="display">Pilih satu masa.</h3>
+      <div class="year-line" id="yearLine">
+        <button class="year-btn active" data-year="1988"><b>1988</b><span>Awal berdiri</span></button>
+        <button class="year-btn" data-year="1990"><b>1990</b><span>Organisasi putri</span></button>
+        <button class="year-btn" data-year="2000"><b>2000</b><span>Pengembangan</span></button>
+        <button class="year-btn" data-year="2012"><b>2012</b><span>Arsip santri</span></button>
+        <button class="year-btn" data-year="2016"><b>2016</b><span>Arsip putri</span></button>
+        <button class="year-btn" data-year="2021"><b>2021</b><span>Bati‑Bati</span></button>
+        <button class="year-btn" data-year="2022"><b>2022</b><span>Sungai Andai</span></button>
+        <button class="year-btn" data-year="2026"><b>2026</b><span>Ekspansi</span></button>
+      </div>
+      <div class="year-panel">
+        <img id="yearImage" src="https://img.youtube.com/vi/6cU3E-EYNrM/maxresdefault.jpg" alt="Arsip tahun terpilih" loading="lazy">
+        <div><div class="kicker" id="yearKicker">1988 / Awal berdiri</div><h4 id="yearTitle">Pondok mulai menulis sejarahnya.</h4><p id="yearText">Titik awal arsip digital. Pada versi resmi, halaman ini dapat berisi foto angkatan, nama pengajar, struktur organisasi, jumlah masuk dan lulusan, fasilitas, serta dokumentasi kegiatan untuk setiap tahun.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="organization" id="struktur">
+  <div class="container">
+    <div class="org-head reveal"><div><div class="kicker">07 / Struktur</div><h2 class="display">Satu pondok.<br>Dua ekosistem.</h2></div><p>Putra dan Putri tidak hanya dipisahkan pada bidang pendidikan. Pengasuhan, asrama, ibadah, keamanan, kesehatan, kebersihan, konsumsi, administrasi, organisasi, PSB, media, fasilitas, alumni, sampai unit kegiatan dapat mempunyai struktur masing-masing.</p></div>
+    <div class="org-filters reveal"><button class="active">Gambut</button><button>Bati‑Bati</button><button>Sungai Andai</button><button>2026</button><button>Arsip Periode</button></div>
+    <div class="org-chart reveal">
+      <div class="org-leader"><img src="https://img.youtube.com/vi/g00vB9en4_c/mqdefault.jpg" alt="H. M. Rasyid Ridha"><div><span>Pimpinan Pondok</span><h3>H. M. Rasyid Ridha</h3><p class="small" style="color:rgba(255,255,255,.5)">Struktur lengkap di bawah pimpinan menunggu SK/daftar resmi pondok agar tidak ada nama atau jabatan yang dikarang.</p></div></div>
+      <div class="org-dual">
+        <div class="org-column"><div class="colhead"><h3>Putra</h3><span>seluruh bidang</span></div><div class="depts">
+          <div class="dept">Pendidikan & Kurikulum</div><div class="dept">Pengasuhan Santri</div><div class="dept">Asrama & Kamar</div><div class="dept">Ibadah & Musholla</div><div class="dept">Keamanan & Ketertiban</div><div class="dept">Kesehatan & Klinik</div><div class="dept">Kebersihan & Lingkungan</div><div class="dept">Konsumsi & Dapur</div><div class="dept">Administrasi & Tata Usaha</div><div class="dept">Kegiatan & Ekstrakurikuler</div><div class="dept">Nahdatul Mutaalimin</div><div class="dept">Guru & Pengajar</div><div class="dept">PSB & Penerimaan</div><div class="dept">Alumni & Silaturahmi</div><div class="dept">Media & Publikasi</div><div class="dept">Sarana & Prasarana</div><div class="dept">Unit Usaha & Koperasi</div><div class="dept">Bidang lainnya</div>
+        </div></div>
+        <div class="org-column"><div class="colhead"><h3>Putri</h3><span>seluruh bidang</span></div><div class="depts">
+          <div class="dept">Pendidikan & Kurikulum</div><div class="dept">Pengasuhan Santriwati</div><div class="dept">Asrama & Kamar</div><div class="dept">Ibadah & Musholla</div><div class="dept">Keamanan & Ketertiban</div><div class="dept">Kesehatan & Klinik</div><div class="dept">Kebersihan & Lingkungan</div><div class="dept">Konsumsi & Dapur</div><div class="dept">Administrasi & Tata Usaha</div><div class="dept">Kegiatan & Ekstrakurikuler</div><div class="dept">Nahdatul Mutaalimat</div><div class="dept">Guru & Pengajar</div><div class="dept">PSB & Penerimaan</div><div class="dept">Alumni & Silaturahmi</div><div class="dept">Media & Publikasi</div><div class="dept">Sarana & Prasarana</div><div class="dept">Unit Usaha & Koperasi</div><div class="dept">Bidang lainnya</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="org-archive reveal">
+      <div><div class="kicker">Arsip organisasi</div><h3 class="display">Nahdatul Mutaalimin / Mutaalimat</h3><p class="small" style="color:rgba(255,255,255,.48)">Sistem menyimpan kepengurusan per periode sehingga struktur sekarang dan terdahulu tidak tertukar.</p></div>
+      <div class="archive-list">
+        <div class="archive-person"><span>1990→</span><b>Nahdatul Mutaalimat</b><em>Keberadaan organisasi putri terdokumentasi sejak sekitar 1990.</em></div>
+        <div class="archive-person"><span>Arsip 2016</span><b>Muthmainah</b><em>Ketua — arsip penelitian, bukan struktur 2026.</em></div>
+        <div class="archive-person"><span>Arsip 2016</span><b>Humairah</b><em>Wakil Ketua — arsip penelitian.</em></div>
+        <div class="archive-person"><span>Arsip 2016</span><b>Rafizah / Nuruzzaidah</b><em>Sekretaris / Bendahara — arsip penelitian.</em></div>
+        <div class="archive-person"><span>2026</span><b>Menunggu data resmi</b><em>Struktur aktif tidak diisi dengan tebakan.</em></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="business" id="usaha">
+  <div class="container">
+    <div class="business-head reveal"><div><div class="kicker">08 / Kemandirian</div><h2 class="display">Ekosistem<br>yang hidup.</h2></div><p>Unit usaha tidak diperlakukan sebagai logo tempelan. Ia ditempatkan dalam narasi kemandirian pesantren: menopang pendidikan, dakwah, pelayanan, dan pemberdayaan umat. Status aktif setiap unit tetap perlu dikonfirmasi.</p></div>
+    <div class="venture-grid reveal">
+      <div class="venture large"><img src="https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=1400&q=85" alt="Representasi visual air mineral"><div class="shade"></div><div class="copy"><span>Unit usaha terdokumentasi</span><h3>Air Mineral Al‑Mursyidul Amin</h3></div></div>
+      <div class="venture type"><div class="kicker">Media</div><h3>Al‑Mursyidul Amin TV</h3><p>Kanal resmi dakwah, kajian, pembangunan, dokumentasi dan kehidupan pesantren.</p></div>
+      <div class="venture"><img src="https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=1000&q=85" alt="Representasi busana muslimah"><div class="shade"></div><div class="copy"><span>Aset identitas tersedia</span><h3>Al‑Mursyidul Amin Hijab</h3></div></div>
+      <div class="venture"><img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1000&q=85" alt="Pertanian"><div class="shade"></div><div class="copy"><span>Arsip usaha</span><h3>Pertanian</h3></div></div>
+      <div class="venture type"><div class="kicker">Arsip usaha</div><h3>Koperasi · Travel · KBIH</h3><p>Unit lain yang tercatat pada penelitian akan dipisahkan antara aktif, historis, dan belum terkonfirmasi.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="media" id="media">
+  <div class="container">
+    <div class="media-head reveal"><div><div class="kicker">09 / Dakwah & Media</div><h2 class="display">Dakwah<br>tanpa batas.</h2></div><p>Media sosial besar yang sudah dimiliki pondok diperlakukan sebagai pintu masuk, sementara website menjadi rumah informasi yang lebih permanen dan terstruktur.</p></div>
+    <div class="video-feature reveal">
+      <a class="visual" target="_blank" href="https://www.youtube.com/watch?v=6cU3E-EYNrM"><img src="https://img.youtube.com/vi/6cU3E-EYNrM/maxresdefault.jpg" alt="Haflah Milad Al-Mursyidul Amin Putri 2026" loading="lazy"><span class="play">▶</span></a>
+      <div class="video-copy"><div><div class="kicker">Dokumentasi 2026</div><h3>Haflah Milad ke‑39 · Putri</h3><p>Konten publik dari Al‑Mursyidul Amin TV menjadi salah satu sumber visual utama prototype. Pada versi resmi, feed dapat dipilih dan dikelola oleh admin.</p></div><a target="_blank" href="https://www.youtube.com/channel/UCdx1BXuGob-m_SnGuDSIdnA" class="btn light">Buka kanal resmi <span class="arrow">→</span></a></div>
+    </div>
+    <div class="social-links reveal">
+      <a target="_blank" href="https://www.youtube.com/channel/UCdx1BXuGob-m_SnGuDSIdnA"><span>YouTube</span><b>Al‑Mursyidul Amin TV ↗</b></a>
+      <a target="_blank" href="https://www.instagram.com/almursyidulamin_real"><span>Instagram</span><b>@almursyidulamin_real ↗</b></a>
+      <a target="_blank" href="https://www.tiktok.com/@almursyidulamin_real"><span>TikTok</span><b>@almursyidulamin_real ↗</b></a>
+    </div>
+  </div>
+</section>
+
+<section class="psb" id="psb">
+  <div class="container psb-grid">
+    <div class="reveal"><div class="kicker">10 / PSB</div><h2 class="display">Masuk<br>sebagai santri.</h2></div>
+    <div class="reveal"><p class="psb-intro">Pendaftaran yang baik bukan sekadar formulir. Orang tua harus tahu alur, cabang, jenjang, persyaratan, seleksi, biaya resmi, dan status pendaftarannya.</p>
+      <div class="steps">
+        <div class="step"><b>Pilih jalur Putra / Putri</b><span>01</span></div>
+        <div class="step"><b>Pilih cabang pesantren</b><span>02</span></div>
+        <div class="step"><b>Pilih jenjang pendidikan</b><span>03</span></div>
+        <div class="step"><b>Isi formulir calon santri</b><span>04</span></div>
+        <div class="step"><b>Unggah berkas persyaratan</b><span>05</span></div>
+        <div class="step"><b>Tes & seleksi</b><span>06</span></div>
+        <div class="step"><b>Pengumuman & daftar ulang</b><span>07</span></div>
+      </div>
+      <div class="psb-warning">Tanggal, kuota, biaya, nomor rekening dan syarat PSB tidak ditampilkan sebelum diverifikasi dari panitia tahun berjalan. Ini sengaja untuk mencegah informasi lama tampil sebagai informasi resmi.</div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div><div class="footer-logo"><img src="data:image/webp;base64,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" alt="Logo Al-Mursyidul Amin"><h3 class="display">Al‑Mursyidul Amin</h3></div><p>Prototype Digital Archive & Information System.<br>Belum merupakan website resmi pondok sampai disetujui pengurus.</p></div>
+      <div class="footer-col"><b>Pesantren</b><a href="#tentang">Sejarah</a><a href="#cabang">Cabang</a><a href="#pendidikan">Pendidikan</a><a href="#kehidupan">Kehidupan Santri</a></div>
+      <div class="footer-col"><b>Arsip</b><a href="#arsip">Data tahunan</a><a href="#struktur">Struktur</a><a href="#struktur">Nahdatul Mutaalimin</a><a href="#struktur">Guru</a></div>
+      <div class="footer-col"><b>Media</b><a target="_blank" href="https://www.instagram.com/almursyidulamin_real">Instagram</a><a target="_blank" href="https://www.tiktok.com/@almursyidulamin_real">TikTok</a><a target="_blank" href="https://www.youtube.com/channel/UCdx1BXuGob-m_SnGuDSIdnA">YouTube</a></div>
+    </div>
+    <div class="footer-bottom"><span>Prototype penawaran · Al‑Mursyidul Amin</span><span>Informasi yang belum terverifikasi sengaja tidak diisi.</span></div>
+  </div>
+</footer>
+
+<div id="archiveModal" style="display:none;position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.78);padding:24px;overflow:auto">
+  <div style="width:min(900px,100%);margin:7vh auto;background:#f4f0e7;padding:38px;position:relative">
+    <button id="closeArchive" style="position:absolute;right:18px;top:18px;border:0;background:none;font-size:1.5rem;cursor:pointer">×</button>
+    <div class="kicker">Skema Database</div><h2 class="display" style="font-size:3.7rem;line-height:.9;margin:10px 0 28px">Arsip yang bisa tumbuh setiap tahun.</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));border-top:1px solid var(--line)">
+      <div style="padding:18px 16px 18px 0;border-bottom:1px solid var(--line)"><b>Cabang</b><p class="small">Gambut · Bati‑Bati · Sungai Andai</p></div>
+      <div style="padding:18px 16px;border-bottom:1px solid var(--line)"><b>Putra / Putri</b><p class="small">Seluruh bidang operasional.</p></div>
+      <div style="padding:18px 16px;border-bottom:1px solid var(--line)"><b>Tahun</b><p class="small">1988 sampai tahun berjalan.</p></div>
+      <div style="padding:18px 16px;border-bottom:1px solid var(--line)"><b>Statistik</b><p class="small">Masuk · aktif · lulus · pendaftar · diterima.</p></div>
+      <div style="padding:18px 16px 18px 0;border-bottom:1px solid var(--line)"><b>Organisasi</b><p class="small">Pimpinan · guru · NM/NM putri · pengasuhan.</p></div>
+      <div style="padding:18px 16px;border-bottom:1px solid var(--line)"><b>Dokumentasi</b><p class="small">Foto · video · berita · prestasi · fasilitas.</p></div>
+    </div>
+  </div>
 </div>
-
-<div style="margin-top:40px" class="section-head"><div><div class="eyebrow">Guru & Tenaga Pendidik</div><h2 style="font-size:2rem">Arsip nama pengajar yang dapat diverifikasi</h2></div><p class="muted">Daftar berikut merupakan arsip penelitian sekitar 2015/16, bukan klaim susunan guru aktif 2026.</p></div>
-<div class="card media-card" style="margin-bottom:18px"><img src="https://img.youtube.com/vi/1IbdIHXCDt0/maxresdefault.jpg" loading="lazy" alt="Dokumentasi dewan guru dan santri"><div class="pad"><span class="badge gold">DOKUMENTASI PUBLIK</span><h3>Dewan guru & santri</h3><p class="muted">Visual dokumentasi publik dari kanal video; profil individual pada versi resmi hanya akan ditampilkan setelah identitas dan izin diverifikasi.</p></div></div>
-<div class="teacher-list">
-<div class="teacher"><span class="badge">ARSIP</span><br><b>H. Muhammad Rasyid Ridho</b></div><div class="teacher"><span class="badge">ARSIP</span><br><b>KH. Thantawi Jauhari</b></div><div class="teacher"><span class="badge">ARSIP</span><br><b>H. M. Dinnor Al-Haki</b></div><div class="teacher"><span class="badge">ARSIP</span><br><b>H. M. Bahrani</b></div><div class="teacher"><span class="badge">ARSIP</span><br><b>H. Ahmad Syauqani</b></div><div class="teacher"><span class="badge">ARSIP</span><br><b>H. Sulaiman</b></div><div class="teacher"><span class="badge">ARSIP</span><br><b>H. Ahmad Basuni</b></div><div class="teacher"><span class="badge">ARSIP</span><br><b>Muhammad Siddiq</b></div><div class="teacher"><span class="badge">ARSIP</span><br><b>H. Abdul Gaffar</b></div><div class="teacher"><span class="badge">ARSIP</span><br><b>Dihyah Abdi</b></div><div class="teacher"><span class="badge">ARSIP</span><br><b>Anshari Rahman</b></div><div class="teacher"><span class="badge">ARSIP</span><br><b>H. Muhammad Fahmi</b></div><div class="teacher"><span class="badge">ARSIP</span><br><b>M. Birhasani</b></div><div class="teacher"><span class="badge">ARSIP</span><br><b>H. Zulkhaidir</b></div><div class="teacher"><span class="badge">ARSIP</span><br><b>H. Ahmad Sayuthi</b></div><div class="teacher"><span class="badge">ARSIP</span><br><b>Hj. Siti Jamilah</b></div>
-</div>
-
-<div style="margin-top:42px" class="section-head"><div><div class="eyebrow">Organisasi Santri</div><h2 style="font-size:2rem">Nahdatul Mutaalimin / Mutaalimat</h2></div><p class="muted">Arsip per periode akan dapat ditelusuri dari kepengurusan terbaru hingga terdahulu.</p></div>
-<div class="nm">
-<div class="org-mini"><span class="badge gold">ARSIP PUTRI 2016</span><h3>Nahdatul Mutaalimat Al‑Mursyidul Amin</h3><small>Organisasi santriwati tercatat telah ada sejak 1990.</small><div class="roles"><div><b>Muthmainah</b><small>Ketua</small></div><div><b>Humairah</b><small>Wakil Ketua</small></div><div><b>Rafizah</b><small>Sekretaris</small></div><div><b>Nuruzzaidah</b><small>Bendahara</small></div></div></div>
-<div class="card pad"><span class="badge">STRUKTUR TERKINI</span><h3>Menunggu data resmi pengurus</h3><p class="muted">Nama pengurus Nahdatul Mutaalimin/Mutaalimat saat ini belum ditemukan dalam sumber publik yang cukup kuat. Situs tidak akan mengarang nama atau jabatan.</p><div class="warning">Setelah data resmi diterima: filter Periode → Cabang → Putra/Putri → Bidang → Personel akan aktif.</div></div>
-</div>
-</div></section>
-
-<section class="section" id="usaha"><div class="wrap">
-<div class="section-head"><div><div class="eyebrow">Kemandirian Pesantren</div><h2>Unit usaha & media dalam satu ekosistem</h2></div><p class="muted">Status “aktif saat ini” akan dikunci setelah konfirmasi pengurus. Logo produk yang BOS kirim menjadi aset identitas untuk versi final.</p></div>
-<div class="grid bizgrid">
-<article class="card biz"><div class="cover blue">💧<br>Air Mineral<br>Al‑Mursyidul Amin</div><div class="pad"><span class="badge">TERDOKUMENTASI</span><h3>Air Mineral</h3><p class="muted">Jejak usaha air minum terdokumentasi dalam penelitian dan label produk yang tersedia.</p></div></article>
-<article class="card biz"><div class="cover">📺<br>Al‑Mursyidul Amin TV</div><div class="pad"><span class="badge">MEDIA RESMI</span><h3>Al‑Mursyidul Amin TV</h3><p class="muted">Kanal dakwah, kajian, dokumentasi dan aktivitas pesantren.</p></div></article>
-<article class="card biz"><div class="cover pink">🧕<br>Al‑Mursyidul Amin Hijab</div><div class="pad"><span class="badge pink">ASET LOGO DIBERIKAN</span><h3>Al‑Mursyidul Amin Hijab</h3><p class="muted">Identitas produk tersedia dari aset BOS; status operasional dan katalog perlu verifikasi pondok.</p></div></article>
-<article class="card biz"><div class="cover">🛒<br>Koperasi / Waserda</div><div class="pad"><span class="badge gold">ARSIP USAHA</span><h3>Koperasi Pesantren</h3><p class="muted">Mendukung kebutuhan santri dan aktivitas ekonomi pesantren.</p></div></article>
-<article class="card biz"><div class="cover">🌾<br>Pertanian & Lumbung</div><div class="pad"><span class="badge gold">ARSIP USAHA</span><h3>Pertanian</h3><p class="muted">Persawahan/lumbung padi tercatat pada penelitian mengenai ekonomi pesantren.</p></div></article>
-<article class="card biz"><div class="cover">🕋<br>Travel & KBIH</div><div class="pad"><span class="badge gold">ARSIP USAHA</span><h3>Alma Tour / KBIH</h3><p class="muted">Jejak layanan perjalanan ibadah dan KBIH tercatat dalam arsip penelitian.</p></div></article>
-</div>
-</div></section>
-
-<section class="section alt" id="media"><div class="wrap">
-<div class="section-head"><div><div class="eyebrow">Dakwah & Media</div><h2>Seluruh kanal resmi di satu tempat</h2></div><p class="muted">Feed berita dan video pada versi produksi dapat ditarik otomatis atau dikelola melalui CMS.</p></div>
-<div class="socials">
-<a class="social yt" target="_blank" href="https://www.youtube.com/channel/UCdx1BXuGob-m_SnGuDSIdnA"><b>YouTube</b><h3>Al‑Mursyidul Amin TV</h3><span>Video kajian, kegiatan, pembangunan dan dokumentasi →</span></a>
-<a class="social ig" target="_blank" href="https://www.instagram.com/almursyidulamin_real"><b>Instagram</b><h3>@almursyidulamin_real</h3><span>Dokumentasi visual dan informasi terkini →</span></a>
-<a class="social tt" target="_blank" href="https://www.tiktok.com/@almursyidulamin_real"><b>TikTok</b><h3>@almursyidulamin_real</h3><span>Video pendek kajian dan aktivitas santri →</span></a>
-</div>
-</div></section>
-
-<section class="section" id="psb"><div class="wrap">
-<div class="section-head"><div><div class="eyebrow">Penerimaan Santri Baru</div><h2>Alur PSB yang jelas dan siap didigitalisasi</h2></div><p class="muted">Biaya, tanggal, kuota dan syarat pada situs resmi harus bersumber dari panitia PSB tahun berjalan.</p></div>
-<div class="psbsteps">
-<div class="step"><span class="n">1</span><b>Pilih Putra/Putri</b></div><div class="step"><span class="n">2</span><b>Pilih Cabang</b></div><div class="step"><span class="n">3</span><b>Pilih Jenjang</b></div><div class="step"><span class="n">4</span><b>Isi Formulir</b></div><div class="step"><span class="n">5</span><b>Unggah Berkas</b></div><div class="step"><span class="n">6</span><b>Tes & Seleksi</b></div><div class="step"><span class="n">7</span><b>Pengumuman</b></div>
-</div>
-<div class="grid g2" style="margin-top:20px">
-<div class="card pad"><h3>Portal Calon Santri</h3><p class="muted">Akun pendaftar, upload berkas, status validasi, jadwal tes, bukti pembayaran, pengumuman dan FAQ.</p><a target="_blank" class="btn small ghost" href="https://www.youtube.com/watch?v=T16Cs8_CFlc">Lihat dokumentasi tes PSB ↗</a></div>
-<div class="card pad"><h3>Dashboard Panitia</h3><p class="muted">Kelola jalur, kuota, persyaratan, biaya, peserta, hasil seleksi, komunikasi dan rekap tiap tahun.</p><span class="badge gold">MODUL ADMIN</span></div>
-</div>
-</div></section>
-
-<section class="section alt" id="sumber"><div class="wrap">
-<div class="section-head"><div><div class="eyebrow">Transparansi Data</div><h2>Fakta, arsip, dan data yang belum tersedia dipisahkan</h2></div><p class="muted">Prototype sengaja tidak mengisi angka tahunan, nama struktur, biaya PSB, atau daftar guru 2026 dengan tebakan.</p></div>
-<div class="source"><b>Kemendikdasmen:</b> NPSN 69950145, alamat induk, status akreditasi A tahun 2025 dan H. M. Rasyid Ridha sebagai kepala pada snapshot data sekolah.</div>
-<div class="source"><b>Kementerian Agama:</b> dokumen izin Pendidikan Diniyah Formal Ulya Al‑Mursyidul Amin tahun 2025 serta data terkait PDF.</div>
-<div class="source"><b>UIN Antasari:</b> penelitian/skripsi yang memuat sejarah, data santri, guru, kehidupan asrama, organisasi santriwati dan unit ekonomi pada periode historis.</div>
-<div class="source"><b>Pemerintah/ANTARA:</b> dokumentasi pembangunan Al‑Mursyidul Amin 2 Bati‑Bati dan Al‑Mursyidul Amin 3 Sungai Andai.</div>
-<div class="source"><b>Kanal resmi:</b> Instagram @almursyidulamin_real, TikTok @almursyidulamin_real, dan Al‑Mursyidul Amin TV.</div>
-<div class="warning" style="margin-top:20px"><b>Untuk rilis resmi:</b> pengurus perlu menyerahkan struktur organisasi terkini, struktur guru, data santri/lulusan tahunan, arsip pengurus organisasi, detail PSB, data fasilitas, kontak resmi, serta status aktif unit usaha. CMS sudah dirancang untuk menampung seluruhnya.</div>
-</div></section>
-
-<footer class="footer"><div class="wrap">
-<div class="footer-grid">
-<div><div class="brand" style="min-width:0"><img src="data:image/webp;base64,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" alt=""><span><strong>PONDOK PESANTREN<br>AL‑MURSYIDUL AMIN</strong><small style="color:#b9d4c9">Gambut • Kalimantan Selatan</small></span></div><p class="note" style="color:#a8c8ba">Prototype digital archive & information system.</p></div>
-<div><b>Jelajahi</b><a href="#tentang">Sejarah</a><a href="#cabang">Cabang</a><a href="#struktur">Struktur</a><a href="#arsip">Data & Arsip</a></div>
-<div><b>Layanan</b><a href="#pendidikan">Pendidikan</a><a href="#kehidupan">Kehidupan Santri</a><a href="#psb">PSB</a><a href="#usaha">Unit Usaha</a></div>
-<div><b>Media</b><a target="_blank" href="https://www.instagram.com/almursyidulamin_real">Instagram</a><a target="_blank" href="https://www.tiktok.com/@almursyidulamin_real">TikTok</a><a target="_blank" href="https://www.youtube.com/channel/UCdx1BXuGob-m_SnGuDSIdnA">YouTube</a></div>
-</div><div class="copyright"><span>Prototype penawaran • bukan website resmi Al‑Mursyidul Amin sampai disetujui pengurus.</span><span>Data publik diperiksa sampai September 2026.</span></div>
-</div></footer>
-
-<div class="modal" id="modal"><div class="modalbox"><button class="close" onclick="closeModal()">×</button><div class="eyebrow">Rancangan Database</div><h2>Data & Arsip Al‑Mursyidul Amin</h2><p>Struktur data produksi akan memakai relasi: <b>Cabang → Tahun → Putra/Putri → Bidang → Jenjang → Personel/Kegiatan/Statistik/Dokumen.</b></p><div class="grid g2"><div class="life"><b>Statistik Tahunan</b><span class="note">masuk, aktif, lulus, pendaftar, diterima</span></div><div class="life"><b>Struktur Organisasi</b><span class="note">periode, bidang, jabatan, personel</span></div><div class="life"><b>Guru</b><span class="note">cabang, gender, jenjang, mata ajar</span></div><div class="life"><b>Dokumentasi</b><span class="note">foto, video, berita, arsip angkatan</span></div></div></div></div>
 
 <script>
-const menu=document.getElementById('menu'),links=document.getElementById('links');
-menu.addEventListener('click',()=>links.classList.toggle('open'));
-document.querySelectorAll('.links a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
-const campus=document.getElementById('campus'),year=document.getElementById('year'),filterText=document.getElementById('filterText');
+const nav=document.getElementById('nav');
+const progress=document.getElementById('progress');
+const toggle=document.getElementById('mobileToggle');
+const links=document.getElementById('navLinks');
+const onScroll=()=>{
+  const y=window.scrollY, h=document.documentElement.scrollHeight-window.innerHeight;
+  nav.classList.toggle('scrolled',y>40);
+  progress.style.width=(h?y/h*100:0)+'%';
+};
+window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+toggle.addEventListener('click',()=>links.classList.toggle('open'));
+links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
+
+const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+const campusFilter=document.getElementById('campusFilter');
+const yearFilter=document.getElementById('yearFilter');
+const filterLabel=document.getElementById('filterLabel');
 let gender='Semua';
-document.querySelectorAll('.gender').forEach(b=>b.addEventListener('click',()=>{
- document.querySelectorAll('.gender').forEach(x=>x.classList.remove('active'));b.classList.add('active');
- gender=b.dataset.g==='putra'?'Putra':b.dataset.g==='putri'?'Putri':'Semua';renderFilter();
+function updateFilter(){filterLabel.textContent=campusFilter.value+' · '+gender+' · '+yearFilter.value}
+campusFilter.addEventListener('change',updateFilter);yearFilter.addEventListener('change',updateFilter);
+document.querySelectorAll('.gender').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('.gender').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');gender=btn.dataset.gender;updateFilter();
 }));
-campus.addEventListener('change',renderFilter);year.addEventListener('change',renderFilter);
-function renderFilter(){filterText.textContent='Filter: '+campus.value+' • '+gender+' • '+year.value+'. Pada versi produksi, semua statistik, struktur, guru, kegiatan dan fasilitas akan mengikuti filter ini.'}
-function openModal(){document.getElementById('modal').classList.add('open')}function closeModal(){document.getElementById('modal').classList.remove('open')}
-document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+
+const years={
+  '1988':['1988 / Awal berdiri','Pondok mulai menulis sejarahnya.','Titik awal arsip digital. Pada versi resmi, halaman ini dapat berisi foto angkatan, nama pengajar, struktur organisasi, jumlah masuk dan lulusan, fasilitas, serta dokumentasi kegiatan untuk setiap tahun.','https://img.youtube.com/vi/6cU3E-EYNrM/maxresdefault.jpg'],
+  '1990':['1990 / Organisasi santri','Jejak organisasi mulai terdokumentasi.','Arsip penelitian mencatat keberadaan Nahdatul Mutaalimat di lingkungan putri sejak sekitar 1990. Riwayat organisasi dapat disusun per periode.','https://img.youtube.com/vi/gf9ksKVWfHI/maxresdefault.jpg'],
+  '2000':['2000 / Pengembangan','Fase pertumbuhan sarana dan komunitas.','Tahun ini ditempatkan sebagai node navigasi arsip. Detail faktual hanya akan diisi ketika dokumen resmi atau arsip pondok tersedia.','https://img.youtube.com/vi/6cU3E-EYNrM/maxresdefault.jpg'],
+  '2012':['2012 / Data santri','Arsip kuantitatif mulai lebih kaya.','Beberapa penelitian terdahulu memuat data jumlah santri dan guru. Angka historis disimpan bersama tahun sumber agar tidak terbaca sebagai kondisi sekarang.','https://img.youtube.com/vi/T16Cs8_CFlc/maxresdefault.jpg'],
+  '2016':['2016 / Arsip Putri','Struktur dan kehidupan santriwati terdokumentasi.','Arsip penelitian memuat data putri, organisasi, serta beberapa nama pengurus. Semuanya diberi label periode agar jelas konteks waktunya.','https://img.youtube.com/vi/gf9ksKVWfHI/maxresdefault.jpg'],
+  '2021':['2021 / Bati‑Bati','Pengembangan kawasan kedua.','Jejak publik pembangunan fasilitas Al‑Mursyidul Amin 2 di Bati‑Bati mulai terlihat pada pemberitaan daerah.','https://img.youtube.com/vi/FebDGHDvBM0/maxresdefault.jpg'],
+  '2022':['2022 / Sungai Andai','Kawasan ketiga mulai dibangun.','Peletakan batu pertama Al‑Mursyidul Amin 3 di Sungai Andai diberitakan Pemerintah Kota Banjarmasin.','https://img.youtube.com/vi/gf9ksKVWfHI/maxresdefault.jpg'],
+  '2026':['2026 / Pengembangan','Pembangunan dan dakwah digital berlanjut.','Kanal resmi masih mendokumentasikan haflah, pembelajaran, serta pembangunan asrama di kawasan pengembangan.','https://img.youtube.com/vi/6cU3E-EYNrM/maxresdefault.jpg']
+};
+document.querySelectorAll('.year-btn').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('.year-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  const d=years[btn.dataset.year];document.getElementById('yearKicker').textContent=d[0];document.getElementById('yearTitle').textContent=d[1];document.getElementById('yearText').textContent=d[2];document.getElementById('yearImage').src=d[3];
+}));
+
+document.querySelectorAll('.org-filters button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.org-filters button').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}));
+
+const modal=document.getElementById('archiveModal');
+document.getElementById('openArchive').addEventListener('click',()=>{modal.style.display='block';document.body.style.overflow='hidden'});
+document.getElementById('closeArchive').addEventListener('click',()=>{modal.style.display='none';document.body.style.overflow=''});
+modal.addEventListener('click',e=>{if(e.target===modal){modal.style.display='none';document.body.style.overflow=''}});
 </script>
-</body></html>
+</body>
+</html>
