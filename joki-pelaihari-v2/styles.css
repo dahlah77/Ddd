@@ -122,3 +122,12 @@
   .news-ticker-track{animation:none;transform:none}
   .news-ticker-track span[aria-hidden="true"]{display:none}
 }
+
+/* estimator refinement */
+.estimator-head{align-items:center}
+.estimator-head h2{margin-top:0}
+#harga .estimator{align-items:center}
+#harga .form-card{display:flex;align-items:center;min-height:100%}
+#harga .form-card .fieldgrid{width:100%}
+#harga .control:disabled{cursor:not-allowed}
+@media(max-width:960px){#harga .form-card{min-height:auto}}
