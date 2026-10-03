@@ -7,6 +7,12 @@ if (!credential || !deviceUrl) throw new Error('Missing VERCEL_MAGIC_URL/code or
 
 const browser = await chromium.launch({headless:true});
 const context = await browser.newContext({storageState:'storage-state.json'});
+if (fs.existsSync('session-storage.json')) {
+  const sessionState = JSON.parse(fs.readFileSync('session-storage.json','utf8') || '{}');
+  await context.addInitScript((state) => {
+    try { for (const [k,v] of Object.entries(state || {})) sessionStorage.setItem(k, v); } catch {}
+  }, sessionState);
+}
 const page = await context.newPage();
 
 if (/^https:\/\//i.test(credential)) {
