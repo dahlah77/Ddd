@@ -1,0 +1,25 @@
+name: Joki Pelaihari V2 Deploy
+
+on:
+  push:
+    branches:
+      - joki-pelaihari-v2-20261004
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Login and deploy
+        env:
+          CI: "false"
+        run: |
+          echo "=== VERCEL_DEVICE_LOGIN_BEGIN ==="
+          vercel login
+          echo "=== VERCEL_DEVICE_LOGIN_DONE ==="
+          cd joki-pelaihari-v2
+          vercel --prod --yes --scope hidayatromi358-3418s-projects --name joki-pelaihari-v2-second
