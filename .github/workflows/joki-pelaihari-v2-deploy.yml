@@ -4,64 +4,143 @@ on:
   push:
     branches:
       - joki-pelaihari-v2-20261004
+    paths-ignore:
+      - 'joki-pelaihari-v2-auth/**'
   workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
+    permissions:
+      contents: read
+    env:
+      VERCEL_EMAIL: hidayatromi358@gmail.com
+      AUTH_BRANCH: joki-pelaihari-v2-auth-20261004
+      AUTH_FILE: joki-pelaihari-v2-auth.enc
+      REPO_SLUG: dahlah77/Ddd
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+      - name: Install Vercel CLI and Playwright
+        run: |
+          npm install --global vercel@latest
+          cd joki-pelaihari-v2
+          npm init -y >/dev/null 2>&1
+          npm install playwright >/dev/null 2>&1
+          npx playwright install --with-deps chromium
 
       - name: Start Vercel device login
         env:
           CI: "false"
         run: |
-          rm -f "$RUNNER_TEMP/vercel-login.log" "$RUNNER_TEMP/vercel-login.pid"
-          nohup vercel login >"$RUNNER_TEMP/vercel-login.log" 2>&1 &
-          echo $! >"$RUNNER_TEMP/vercel-login.pid"
-          sleep 8
-          cat "$RUNNER_TEMP/vercel-login.log" || true
+          cd joki-pelaihari-v2
+          rm -f vercel-login.log vercel-login.pid device-url.txt
+          nohup vercel login >vercel-login.log 2>&1 &
+          echo $! >vercel-login.pid
+          for i in $(seq 1 60); do
+            URL="$(grep -Eo 'https://vercel\.com/oauth/device\?user_code=[A-Z0-9-]+' vercel-login.log | tail -1 || true)"
+            if [ -n "$URL" ]; then
+              echo "$URL" > device-url.txt
+              break
+            fi
+            sleep 1
+          done
+          test -s device-url.txt
+          cat vercel-login.log
 
-      - name: Upload login instructions
+      - name: Generate ephemeral encryption key
+        run: |
+          cd joki-pelaihari-v2
+          openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -out auth-private.pem
+          openssl pkey -in auth-private.pem -pubout -out auth-public.pem
+
+      - name: Request Vercel email verification
+        run: |
+          cd joki-pelaihari-v2
+          export DEVICE_URL="$(cat device-url.txt)"
+          node scripts/request-vercel-auth.mjs
+
+      - name: Upload device auth handoff
         uses: actions/upload-artifact@v4
         with:
-          name: vercel-device-login
-          path: ${{ runner.temp }}/vercel-login.log
+          name: vercel-device-auth-handoff
+          path: |
+            joki-pelaihari-v2/device-url.txt
+            joki-pelaihari-v2/auth-public.pem
+            joki-pelaihari-v2/auth-page-before.txt
+            joki-pelaihari-v2/auth-page-after.txt
+            joki-pelaihari-v2/auth-page-after.png
           if-no-files-found: error
           retention-days: 1
 
-      - name: Wait for Vercel authorization and deploy
+      - name: Wait for encrypted Vercel verification link
+        run: |
+          cd joki-pelaihari-v2
+          RAW="https://raw.githubusercontent.com/${REPO_SLUG}/${AUTH_BRANCH}/${AUTH_FILE}"
+          rm -f auth.enc auth.txt
+          for i in $(seq 1 360); do
+            if curl -fLsS -H 'Cache-Control: no-cache' "${RAW}?t=$(date +%s)" -o auth.enc; then
+              if [ -s auth.enc ]; then
+                break
+              fi
+            fi
+            rm -f auth.enc
+            sleep 2
+          done
+          test -s auth.enc
+          openssl pkeyutl -decrypt -inkey auth-private.pem -in auth.enc -out auth.txt \
+            -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256
+          test -s auth.txt
+
+      - name: Complete Vercel browser authorization
+        run: |
+          cd joki-pelaihari-v2
+          export DEVICE_URL="$(cat device-url.txt)"
+          export VERCEL_MAGIC_URL="$(cat auth.txt)"
+          node scripts/complete-vercel-auth.mjs
+
+      - name: Wait for CLI login completion
         env:
           CI: "false"
         run: |
-          PID="$(cat "$RUNNER_TEMP/vercel-login.pid")"
-          for i in $(seq 1 300); do
+          cd joki-pelaihari-v2
+          PID="$(cat vercel-login.pid)"
+          for i in $(seq 1 90); do
             if ! kill -0 "$PID" 2>/dev/null; then
               break
             fi
             sleep 2
           done
-          echo "=== VERCEL LOGIN RESULT ==="
-          cat "$RUNNER_TEMP/vercel-login.log" || true
+          cat vercel-login.log
           if kill -0 "$PID" 2>/dev/null; then
-            echo "Vercel device login timed out."
             kill "$PID" || true
+            echo "Vercel CLI login did not complete"
             exit 1
           fi
           vercel whoami
+
+      - name: Deploy isolated V2 project to Vercel
+        env:
+          CI: "false"
+        run: |
           cd joki-pelaihari-v2
-          echo "=== DEPLOYING ==="
-          vercel --prod --yes --scope hidayatromi358-3418s-projects --name joki-pelaihari-v2-second | tee "$RUNNER_TEMP/vercel-deploy.log"
+          vercel --prod --yes --scope hidayatromi358-3418s-projects --name joki-pelaihari-v2-second 2>&1 | tee vercel-deploy.log
+          grep -Eo 'https://[^[:space:]]+\.vercel\.app' vercel-deploy.log | tail -1 > vercel-live-url.txt
+          test -s vercel-live-url.txt
+          cat vercel-live-url.txt
 
       - name: Upload deploy result
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: vercel-deploy-result
-          path: ${{ runner.temp }}/vercel-deploy.log
+          name: vercel-v2-deploy-result
+          path: |
+            joki-pelaihari-v2/vercel-deploy.log
+            joki-pelaihari-v2/vercel-live-url.txt
+            joki-pelaihari-v2/vercel-login.log
+            joki-pelaihari-v2/magic-page.txt
+            joki-pelaihari-v2/device-page-*.txt
+            joki-pelaihari-v2/device-page-final.png
           if-no-files-found: ignore
           retention-days: 1
