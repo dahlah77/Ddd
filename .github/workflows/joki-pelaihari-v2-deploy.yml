@@ -73,19 +73,23 @@ jobs:
           CI: "false"
         run: |
           PID="$(cat vercel-login.pid)"
+          AUTH_OK=0
           for i in $(seq 1 60); do
-            if ! kill -0 "$PID" 2>/dev/null; then
+            if vercel whoami >/tmp/vercel-whoami.txt 2>/tmp/vercel-whoami.err; then
+              AUTH_OK=1
               break
             fi
             sleep 2
           done
-          cat vercel-login.log
-          if kill -0 "$PID" 2>/dev/null; then
-            kill "$PID" || true
-            echo "Vercel CLI authentication did not complete"
+          cat vercel-login.log || true
+          cat /tmp/vercel-whoami.txt || true
+          cat /tmp/vercel-whoami.err || true
+          if [ "$AUTH_OK" != "1" ]; then
+            kill "$PID" 2>/dev/null || true
+            echo "Vercel CLI authentication did not become usable"
             exit 1
           fi
-          vercel whoami
+          kill "$PID" 2>/dev/null || true
 
       - name: Deploy separate Joki Pelaihari V2 project
         env:
