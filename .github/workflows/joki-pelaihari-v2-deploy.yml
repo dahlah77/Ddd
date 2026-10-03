@@ -9,112 +9,88 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
 
       - name: Preflight exact source
         run: |
           grep -Fq '<h2>Layanan Kami</h2>' joki-pelaihari-v2/index.html
+          grep -Fq '<h2>Smart Price Calculator</h2>' joki-pelaihari-v2/index.html
+          grep -Fq 'Bagian / Jenis Pekerjaan' joki-pelaihari-v2/index.html
           grep -Fq 'BUILD_MARKER_SERVICES_2017' joki-pelaihari-v2/index.html
-          if grep -Fq 'Satu tempat. Banyak yang bisa dibantu.' joki-pelaihari-v2/index.html; then
-            echo "Old heading still exists in deployment source"
+          if grep -Fq 'Cek estimasi dalam hitungan detik.' joki-pelaihari-v2/index.html; then
+            echo "Old calculator heading still exists"
             exit 1
           fi
-          if grep -Fq '<div class="eyebrow">Layanan</div>' joki-pelaihari-v2/index.html; then
-            echo "Old eyebrow still exists in deployment source"
+          if grep -Fq 'Estimasi otomatis ini menggunakan nominal price list utama' joki-pelaihari-v2/index.html; then
+            echo "Old estimator notice still exists"
+            exit 1
+          fi
+          if grep -Fq 'Satu tempat. Banyak yang bisa dibantu.' joki-pelaihari-v2/index.html; then
+            echo "Old service heading still exists"
             exit 1
           fi
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Start Vercel device login
+      - name: Resolve existing Vercel CI token
+        id: auth
         env:
-          CI: "false"
+          VERCEL_TOKEN_A: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TOKEN_B: ${{ secrets.VERCEL_ACCESS_TOKEN }}
+          VERCEL_TOKEN_C: ${{ secrets.VERCEL_API_TOKEN }}
+          VERCEL_TOKEN_D: ${{ secrets.VERCEL_CLI_TOKEN }}
         run: |
-          rm -f vercel-login.log vercel-login.pid device-url.txt
-          nohup vercel login >vercel-login.log 2>&1 &
-          echo $! >vercel-login.pid
-          for i in $(seq 1 60); do
-            URL="$(grep -Eo 'https://vercel\.com/oauth/device\?user_code=[A-Z0-9-]+' vercel-login.log | tail -1 || true)"
-            if [ -n "$URL" ]; then
-              echo "$URL" > device-url.txt
-              break
-            fi
-            sleep 1
+          TOKEN=""
+          for V in "$VERCEL_TOKEN_A" "$VERCEL_TOKEN_B" "$VERCEL_TOKEN_C" "$VERCEL_TOKEN_D"; do
+            if [ -n "$V" ]; then TOKEN="$V"; break; fi
           done
-          test -s device-url.txt
-          cat device-url.txt
-
-      - name: Upload login link
-        uses: actions/upload-artifact@v4
-        with:
-          name: vercel-login-link
-          path: device-url.txt
-          if-no-files-found: error
-          retention-days: 1
-
-      - name: Wait until Vercel login is authorized
-        env:
-          CI: "false"
-        run: |
-          AUTH_OK=0
-          for i in $(seq 1 180); do
-            if vercel whoami >/tmp/vercel-whoami.txt 2>/tmp/vercel-whoami.err; then
-              AUTH_OK=1
-              break
-            fi
-            sleep 5
-          done
-          cat vercel-login.log || true
-          cat /tmp/vercel-whoami.txt || true
-          cat /tmp/vercel-whoami.err || true
-          test "$AUTH_OK" = "1"
+          if [ -z "$TOKEN" ]; then
+            echo "No reusable Vercel CI token is configured in GitHub secrets."
+            exit 2
+          fi
+          echo "::add-mask::$TOKEN"
+          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
+          vercel whoami --token "$TOKEN"
 
       - name: Force fresh production deploy
         env:
-          CI: "false"
+          VERCEL_TOKEN: ${{ steps.auth.outputs.token }}
         run: |
           cd joki-pelaihari-v2
-          vercel --prod --yes --force --scope hidayatromi358-3418s-projects > ../vercel-live-url.txt 2> ../vercel-deploy.log
-          cat ../vercel-deploy.log
-          DEPLOY_URL="$(tail -1 ../vercel-live-url.txt | tr -d '\r\n')"
-          test -n "$DEPLOY_URL"
-          echo "$DEPLOY_URL"
+          vercel --prod --yes --force --token "$VERCEL_TOKEN" --scope hidayatromi358-3418s-projects 2>&1 | tee ../vercel-deploy.log
+          grep -Eo 'https://[^[:space:]]+\.vercel\.app' ../vercel-deploy.log | tail -1 > ../vercel-live-url.txt
+          test -s ../vercel-live-url.txt
+          cat ../vercel-live-url.txt
 
-      - name: Force production alias to this exact deployment
+      - name: Force production alias
         env:
-          CI: "false"
+          VERCEL_TOKEN: ${{ steps.auth.outputs.token }}
         run: |
-          DEPLOY_URL="$(tail -1 vercel-live-url.txt | tr -d '\r\n')"
-          vercel alias set "$DEPLOY_URL" joki-pelaihari-v2.vercel.app --scope hidayatromi358-3418s-projects
+          DEPLOY_URL="$(cat vercel-live-url.txt)"
+          vercel alias set "$DEPLOY_URL" joki-pelaihari-v2.vercel.app --token "$VERCEL_TOKEN" --scope hidayatromi358-3418s-projects
 
-      - name: Make production public and verify exact live HTML
-        env:
-          CI: "false"
+      - name: Verify live production
         run: |
-          vercel project protection disable joki-pelaihari-v2 --sso --scope hidayatromi358-3418s-projects || true
           URL="https://joki-pelaihari-v2.vercel.app/?verify=${GITHUB_SHA}"
-          for i in $(seq 1 12); do
+          for i in $(seq 1 20); do
             if curl -fsSL -H 'Cache-Control: no-cache' -H 'Pragma: no-cache' "$URL" -o live-home.html; then
-              if grep -Fq '<h2>Layanan Kami</h2>' live-home.html && grep -Fq 'BUILD_MARKER_SERVICES_2017' live-home.html; then
+              if grep -Fq '<h2>Layanan Kami</h2>' live-home.html \
+                && grep -Fq '<h2>Smart Price Calculator</h2>' live-home.html \
+                && grep -Fq 'Bagian / Jenis Pekerjaan' live-home.html; then
                 break
               fi
             fi
             sleep 3
           done
           grep -Fq '<h2>Layanan Kami</h2>' live-home.html
-          grep -Fq 'BUILD_MARKER_SERVICES_2017' live-home.html
-          if grep -Fq 'Satu tempat. Banyak yang bisa dibantu.' live-home.html; then
-            echo "ERROR: public alias still serves old heading"
-            exit 1
-          fi
-          if grep -Fq '<div class="eyebrow">Layanan</div>' live-home.html; then
-            echo "ERROR: public alias still serves old eyebrow"
-            exit 1
-          fi
-          echo "LIVE VERIFIED: Layanan Kami" | tee live-check.txt
+          grep -Fq '<h2>Smart Price Calculator</h2>' live-home.html
+          grep -Fq 'Bagian / Jenis Pekerjaan' live-home.html
+          ! grep -Fq 'Cek estimasi dalam hitungan detik.' live-home.html
+          ! grep -Fq 'Estimasi otomatis ini menggunakan nominal price list utama' live-home.html
+          echo "LIVE VERIFIED" | tee live-check.txt
 
       - name: Upload deployment proof
         if: always()
@@ -124,7 +100,6 @@ jobs:
           path: |
             vercel-live-url.txt
             vercel-deploy.log
-            vercel-login.log
             live-home.html
             live-check.txt
           if-no-files-found: ignore
