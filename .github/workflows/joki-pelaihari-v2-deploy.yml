@@ -83,13 +83,7 @@ jobs:
           rm -f auth.enc auth.txt response.json
           for i in $(seq 1 360); do
             if curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "${API}" -o response.json; then
-              python3 - <<'PY'
-import json,base64
-d=json.load(open('response.json'))
-content=(d.get('content') or '').replace('\n','')
-if content:
-    open('auth.enc','wb').write(base64.b64decode(content))
-PY
+              python3 -c "import json,base64; d=json.load(open('response.json')); x=(d.get('content') or '').replace('\\n',''); open('auth.enc','wb').write(base64.b64decode(x)) if x else None"
               if [ -s auth.enc ]; then
                 break
               fi
