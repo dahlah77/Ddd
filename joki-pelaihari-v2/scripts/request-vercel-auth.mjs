@@ -14,7 +14,7 @@ fs.writeFileSync('auth-page-before.txt', await page.locator('body').innerText().
 
 let emailInput = page.locator('input[type="email"]');
 if (await emailInput.count() === 0) {
-  emailInput = page.locator('input').filter({has: page.locator('')}).first();
+  emailInput = page.locator('input').first();
 }
 if (await emailInput.count() === 0) throw new Error('Email input not found on Vercel device page');
 await emailInput.first().fill(email);
