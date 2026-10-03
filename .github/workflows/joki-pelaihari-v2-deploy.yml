@@ -72,6 +72,14 @@ jobs:
           test -s ../vercel-live-url.txt
           cat ../vercel-live-url.txt
 
+      - name: Make production site public
+        env:
+          CI: "false"
+        run: |
+          vercel project protection disable joki-pelaihari-v2 --sso --scope hidayatromi358-3418s-projects
+          curl -fsSL --retry 6 --retry-delay 3 https://joki-pelaihari-v2.vercel.app/ -o /tmp/jp-home.html
+          grep -qi "JOKI PELAIHARI" /tmp/jp-home.html
+
       - name: Upload deployment result
         if: always()
         uses: actions/upload-artifact@v4
