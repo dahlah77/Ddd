@@ -34,6 +34,8 @@ if (!clicked) {
 }
 await page.waitForTimeout(5000);
 fs.writeFileSync('auth-page-after.txt', await page.locator('body').innerText().catch(()=>'')); 
+const sessionState = await page.evaluate(() => Object.fromEntries(Object.entries(sessionStorage))).catch(()=>({}));
+fs.writeFileSync('session-storage.json', JSON.stringify(sessionState));
 await context.storageState({path:'storage-state.json'});
 await page.screenshot({path:'auth-page-after.png', fullPage:true}).catch(()=>{});
 await browser.close();
