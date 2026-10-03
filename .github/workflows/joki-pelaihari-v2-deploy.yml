@@ -75,17 +75,26 @@ jobs:
           retention-days: 1
 
       - name: Wait for encrypted Vercel verification link
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           cd joki-pelaihari-v2
-          RAW="https://raw.githubusercontent.com/${REPO_SLUG}/${AUTH_BRANCH}/joki-pelaihari-v2-auth-${GITHUB_RUN_ID}.enc"
-          rm -f auth.enc auth.txt
+          API="https://api.github.com/repos/${REPO_SLUG}/contents/joki-pelaihari-v2-auth-${GITHUB_RUN_ID}.enc?ref=${AUTH_BRANCH}"
+          rm -f auth.enc auth.txt response.json
           for i in $(seq 1 360); do
-            if curl -fLsS -H 'Cache-Control: no-cache' "${RAW}?t=$(date +%s)" -o auth.enc; then
+            if curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "${API}" -o response.json; then
+              python3 - <<'PY'
+import json,base64
+d=json.load(open('response.json'))
+content=(d.get('content') or '').replace('\n','')
+if content:
+    open('auth.enc','wb').write(base64.b64decode(content))
+PY
               if [ -s auth.enc ]; then
                 break
               fi
             fi
-            rm -f auth.enc
+            rm -f auth.enc response.json
             sleep 2
           done
           test -s auth.enc
