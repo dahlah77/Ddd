@@ -13,6 +13,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Preflight exact source
+        run: |
+          grep -Fq '<h2>Layanan Kami</h2>' joki-pelaihari-v2/index.html
+          grep -Fq 'BUILD_MARKER_SERVICES_2017' joki-pelaihari-v2/index.html
+          if grep -Fq 'Satu tempat. Banyak yang bisa dibantu.' joki-pelaihari-v2/index.html; then
+            echo "Old heading still exists in deployment source"
+            exit 1
+          fi
+          if grep -Fq '<div class="eyebrow">Layanan</div>' joki-pelaihari-v2/index.html; then
+            echo "Old eyebrow still exists in deployment source"
+            exit 1
+          fi
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
@@ -57,30 +70,53 @@ jobs:
           cat vercel-login.log || true
           cat /tmp/vercel-whoami.txt || true
           cat /tmp/vercel-whoami.err || true
-          if [ "$AUTH_OK" != "1" ]; then
-            echo "Vercel login was not authorized before timeout."
-            exit 1
-          fi
+          test "$AUTH_OK" = "1"
 
-      - name: Deploy separate Joki Pelaihari V2 project
+      - name: Force fresh production deploy
         env:
           CI: "false"
         run: |
           cd joki-pelaihari-v2
-          vercel --prod --yes --scope hidayatromi358-3418s-projects 2>&1 | tee ../vercel-deploy.log
-          grep -Eo 'https://[^[:space:]]+\.vercel\.app' ../vercel-deploy.log | tail -1 > ../vercel-live-url.txt
-          test -s ../vercel-live-url.txt
-          cat ../vercel-live-url.txt
+          vercel --prod --yes --force --scope hidayatromi358-3418s-projects > ../vercel-live-url.txt 2> ../vercel-deploy.log
+          cat ../vercel-deploy.log
+          DEPLOY_URL="$(tail -1 ../vercel-live-url.txt | tr -d '\r\n')"
+          test -n "$DEPLOY_URL"
+          echo "$DEPLOY_URL"
 
-      - name: Make production site public
+      - name: Force production alias to this exact deployment
         env:
           CI: "false"
         run: |
-          vercel project protection disable joki-pelaihari-v2 --sso --scope hidayatromi358-3418s-projects
-          curl -fsSL --retry 6 --retry-delay 3 https://joki-pelaihari-v2.vercel.app/ -o /tmp/jp-home.html
-          grep -qi "JOKI PELAIHARI" /tmp/jp-home.html
+          DEPLOY_URL="$(tail -1 vercel-live-url.txt | tr -d '\r\n')"
+          vercel alias set "$DEPLOY_URL" joki-pelaihari-v2.vercel.app --scope hidayatromi358-3418s-projects
 
-      - name: Upload deployment result
+      - name: Make production public and verify exact live HTML
+        env:
+          CI: "false"
+        run: |
+          vercel project protection disable joki-pelaihari-v2 --sso --scope hidayatromi358-3418s-projects || true
+          URL="https://joki-pelaihari-v2.vercel.app/?verify=${GITHUB_SHA}"
+          for i in $(seq 1 12); do
+            if curl -fsSL -H 'Cache-Control: no-cache' -H 'Pragma: no-cache' "$URL" -o live-home.html; then
+              if grep -Fq '<h2>Layanan Kami</h2>' live-home.html && grep -Fq 'BUILD_MARKER_SERVICES_2017' live-home.html; then
+                break
+              fi
+            fi
+            sleep 3
+          done
+          grep -Fq '<h2>Layanan Kami</h2>' live-home.html
+          grep -Fq 'BUILD_MARKER_SERVICES_2017' live-home.html
+          if grep -Fq 'Satu tempat. Banyak yang bisa dibantu.' live-home.html; then
+            echo "ERROR: public alias still serves old heading"
+            exit 1
+          fi
+          if grep -Fq '<div class="eyebrow">Layanan</div>' live-home.html; then
+            echo "ERROR: public alias still serves old eyebrow"
+            exit 1
+          fi
+          echo "LIVE VERIFIED: Layanan Kami" | tee live-check.txt
+
+      - name: Upload deployment proof
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -89,5 +125,7 @@ jobs:
             vercel-live-url.txt
             vercel-deploy.log
             vercel-login.log
+            live-home.html
+            live-check.txt
           if-no-files-found: ignore
           retention-days: 1
