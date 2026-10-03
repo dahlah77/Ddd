@@ -9,24 +9,14 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
-    permissions:
-      contents: read
-    env:
-      VERCEL_EMAIL: hidayatromi358@gmail.com
-      AUTH_BRANCH: joki-pelaihari-v2-auth-20261004
-      REPO_SLUG: dahlah77/Ddd
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Vercel CLI and browser driver
-        run: |
-          npm install --global vercel@latest
-          npm init -y >/dev/null 2>&1
-          npm install playwright >/dev/null 2>&1
-          npx playwright install --with-deps chromium
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
 
-      - name: Start isolated Vercel device login
+      - name: Start Vercel device login
         env:
           CI: "false"
         run: |
@@ -42,54 +32,35 @@ jobs:
             sleep 1
           done
           test -s device-url.txt
-          cat vercel-login.log
+          cat device-url.txt
 
-      - name: Generate one-time encryption key
-        run: |
-          openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -out auth-private.pem
-          openssl pkey -in auth-private.pem -pubout -out auth-public.pem
-
-      - name: Upload Vercel auth handoff
+      - name: Upload login link
         uses: actions/upload-artifact@v4
         with:
-          name: vercel-v2-auth-handoff
-          path: |
-            device-url.txt
-            auth-public.pem
+          name: vercel-login-link
+          path: device-url.txt
           if-no-files-found: error
           retention-days: 1
 
-      - name: Authorize Vercel in persistent browser session
-        env:
-          CI: "false"
-          DEVICE_URL: ${{ steps.device.outputs.url }}
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          export DEVICE_URL="$(cat device-url.txt)"
-          node joki-pelaihari-v2/scripts/vercel-auth-agent.mjs
-
-      - name: Confirm CLI authentication
+      - name: Wait until Vercel login is authorized
         env:
           CI: "false"
         run: |
-          PID="$(cat vercel-login.pid)"
           AUTH_OK=0
-          for i in $(seq 1 60); do
+          for i in $(seq 1 180); do
             if vercel whoami >/tmp/vercel-whoami.txt 2>/tmp/vercel-whoami.err; then
               AUTH_OK=1
               break
             fi
-            sleep 2
+            sleep 5
           done
           cat vercel-login.log || true
           cat /tmp/vercel-whoami.txt || true
           cat /tmp/vercel-whoami.err || true
           if [ "$AUTH_OK" != "1" ]; then
-            kill "$PID" 2>/dev/null || true
-            echo "Vercel CLI authentication did not become usable"
+            echo "Vercel login was not authorized before timeout."
             exit 1
           fi
-          kill "$PID" 2>/dev/null || true
 
       - name: Deploy separate Joki Pelaihari V2 project
         env:
@@ -110,7 +81,5 @@ jobs:
             vercel-live-url.txt
             vercel-deploy.log
             vercel-login.log
-            device-*.txt
-            device-*.png
           if-no-files-found: ignore
           retention-days: 1
