@@ -12,14 +12,56 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
-      - name: Login and deploy
+
+      - name: Start Vercel device login
         env:
           CI: "false"
         run: |
-          echo "=== VERCEL_DEVICE_LOGIN_BEGIN ==="
-          vercel login
-          echo "=== VERCEL_DEVICE_LOGIN_DONE ==="
+          rm -f "$RUNNER_TEMP/vercel-login.log" "$RUNNER_TEMP/vercel-login.pid"
+          nohup vercel login >"$RUNNER_TEMP/vercel-login.log" 2>&1 &
+          echo $! >"$RUNNER_TEMP/vercel-login.pid"
+          sleep 8
+          cat "$RUNNER_TEMP/vercel-login.log" || true
+
+      - name: Upload login instructions
+        uses: actions/upload-artifact@v4
+        with:
+          name: vercel-device-login
+          path: ${{ runner.temp }}/vercel-login.log
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Wait for Vercel authorization and deploy
+        env:
+          CI: "false"
+        run: |
+          PID="$(cat "$RUNNER_TEMP/vercel-login.pid")"
+          for i in $(seq 1 300); do
+            if ! kill -0 "$PID" 2>/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+          echo "=== VERCEL LOGIN RESULT ==="
+          cat "$RUNNER_TEMP/vercel-login.log" || true
+          if kill -0 "$PID" 2>/dev/null; then
+            echo "Vercel device login timed out."
+            kill "$PID" || true
+            exit 1
+          fi
+          vercel whoami
           cd joki-pelaihari-v2
-          vercel --prod --yes --scope hidayatromi358-3418s-projects --name joki-pelaihari-v2-second
+          echo "=== DEPLOYING ==="
+          vercel --prod --yes --scope hidayatromi358-3418s-projects --name joki-pelaihari-v2-second | tee "$RUNNER_TEMP/vercel-deploy.log"
+
+      - name: Upload deploy result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vercel-deploy-result
+          path: ${{ runner.temp }}/vercel-deploy.log
+          if-no-files-found: ignore
+          retention-days: 1
