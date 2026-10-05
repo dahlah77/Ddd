@@ -31,7 +31,10 @@ jobs:
           done
           test "$CODE" = "200"
           grep -Fq 'google-site-verification: google1b06420cdde4e63b.html' /tmp/google.html
-          curl -fsSL "$BASE/robots.txt?cb=$(date +%s)" | grep -Fq 'Sitemap: https://joki-pelaihari-v2.vercel.app/sitemap.xml'
-          curl -fsSL "$BASE/sitemap.xml?cb=$(date +%s)" | grep -Fq '<loc>https://joki-pelaihari-v2.vercel.app/</loc>'
-          curl -fsSL "$BASE/?cb=$(date +%s)" | grep -Fq 'rel="canonical" href="https://joki-pelaihari-v2.vercel.app/"'
+          curl -fsSL "$BASE/robots.txt?cb=$(date +%s)" -o /tmp/robots.txt
+          grep -Fq 'Sitemap: https://joki-pelaihari-v2.vercel.app/sitemap.xml' /tmp/robots.txt
+          curl -fsSL "$BASE/sitemap.xml?cb=$(date +%s)" -o /tmp/sitemap.xml
+          grep -Fq '<loc>https://joki-pelaihari-v2.vercel.app/</loc>' /tmp/sitemap.xml
+          curl -fsSL "$BASE/?cb=$(date +%s)" -o /tmp/home.html
+          grep -Fq 'rel="canonical" href="https://joki-pelaihari-v2.vercel.app/"' /tmp/home.html
           echo "LIVE SEO VERIFIED"
