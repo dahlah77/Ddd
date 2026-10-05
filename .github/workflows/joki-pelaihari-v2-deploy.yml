@@ -10,6 +10,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 12
+    env:
+      VERCEL_ORG_ID: team_Kxi4Rlxx7agCcMgkfUQoZodY
+      VERCEL_PROJECT_ID: prj_mgk51Zdt0E0HorVBnNtCMezh5dpF
     steps:
       - uses: actions/checkout@v4
 
@@ -36,7 +39,6 @@ jobs:
         run: npm install --global vercel@latest
 
       - name: Resolve existing Vercel CI token
-        id: auth
         env:
           VERCEL_TOKEN_A: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_TOKEN_B: ${{ secrets.VERCEL_ACCESS_TOKEN }}
@@ -48,26 +50,39 @@ jobs:
             if [ -n "$V" ]; then TOKEN="$V"; break; fi
           done
           if [ -z "$TOKEN" ]; then
-            echo "No reusable Vercel CI token is configured in GitHub secrets."
+            echo "::error::Configure the VERCEL_TOKEN repository secret with a token from an authorized member of hidayatromi358-3418s-projects. Interactive device login is not supported in CI."
             exit 2
           fi
           echo "::add-mask::$TOKEN"
-          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
+          echo "VERCEL_TOKEN=$TOKEN" >> "$GITHUB_ENV"
           vercel whoami --token "$TOKEN"
+          # Check project authorization before any production mutation.
+          if ! curl --fail --silent --show-error --max-time 30 \
+            -H "Authorization: Bearer $TOKEN" \
+            "https://api.vercel.com/v9/projects/$VERCEL_PROJECT_ID?teamId=$VERCEL_ORG_ID" \
+            -o "$RUNNER_TEMP/vercel-project.json"; then
+            echo "::error::Vercel token cannot access the configured project/team. Check token scope and the token owner's team membership."
+            exit 1
+          fi
+          node -e 'const fs = require("fs"); const p = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP + "/vercel-project.json", "utf8")); if (p.id !== process.env.VERCEL_PROJECT_ID || p.accountId !== process.env.VERCEL_ORG_ID || p.name !== "joki-pelaihari-v2") { throw new Error("Unexpected Vercel project/team; refusing production deployment"); }'
 
       - name: Force fresh production deploy
-        env:
-          VERCEL_TOKEN: ${{ steps.auth.outputs.token }}
         run: |
           cd joki-pelaihari-v2
-          vercel --prod --yes --force --token "$VERCEL_TOKEN" --scope hidayatromi358-3418s-projects 2>&1 | tee ../vercel-deploy.log
-          grep -Eo 'https://[^[:space:]]+\.vercel\.app' ../vercel-deploy.log | tail -1 > ../vercel-live-url.txt
-          test -s ../vercel-live-url.txt
+          if ! vercel --prod --yes --force --token "$VERCEL_TOKEN" --scope hidayatromi358-3418s-projects > ../vercel-live-url.txt 2> ../vercel-deploy.log; then
+            cat ../vercel-deploy.log
+            exit 1
+          fi
+          cat ../vercel-deploy.log
+          DEPLOY_URL="$(tail -1 ../vercel-live-url.txt | tr -d '\r\n')"
+          if [[ ! "$DEPLOY_URL" =~ ^https://[a-zA-Z0-9-]+\.vercel\.app$ ]]; then
+            echo "::error::Vercel did not return a valid deployment URL; refusing alias update."
+            exit 1
+          fi
+          printf '%s\n' "$DEPLOY_URL" > ../vercel-live-url.txt
           cat ../vercel-live-url.txt
 
       - name: Force production alias
-        env:
-          VERCEL_TOKEN: ${{ steps.auth.outputs.token }}
         run: |
           DEPLOY_URL="$(cat vercel-live-url.txt)"
           vercel alias set "$DEPLOY_URL" joki-pelaihari-v2.vercel.app --token "$VERCEL_TOKEN" --scope hidayatromi358-3418s-projects
