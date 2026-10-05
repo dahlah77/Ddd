@@ -1,0 +1,37 @@
+name: Verify Joki Pelaihari SEO Live
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'joki-pelaihari-v2/**'
+      - '.github/workflows/verify-joki-seo.yml'
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify Google file and SEO endpoints
+        run: |
+          set -euo pipefail
+          BASE="https://joki-pelaihari-v2.vercel.app"
+          for i in $(seq 1 30); do
+            echo "Attempt $i"
+            CODE="$(curl -sS -L -o /tmp/google.html -w '%{http_code}' -H 'Cache-Control: no-cache' "$BASE/google1b06420cdde4e63b.html?cb=$(date +%s)")" || CODE="000"
+            BODY="$(cat /tmp/google.html 2>/dev/null || true)"
+            echo "HTTP $CODE"
+            echo "$BODY"
+            if [ "$CODE" = "200" ] && printf '%s' "$BODY" | grep -Fq 'google-site-verification: google1b06420cdde4e63b.html'; then
+              break
+            fi
+            sleep 5
+          done
+          test "$CODE" = "200"
+          grep -Fq 'google-site-verification: google1b06420cdde4e63b.html' /tmp/google.html
+          curl -fsSL "$BASE/robots.txt?cb=$(date +%s)" | grep -Fq 'Sitemap: https://joki-pelaihari-v2.vercel.app/sitemap.xml'
+          curl -fsSL "$BASE/sitemap.xml?cb=$(date +%s)" | grep -Fq '<loc>https://joki-pelaihari-v2.vercel.app/</loc>'
+          curl -fsSL "$BASE/?cb=$(date +%s)" | grep -Fq 'rel="canonical" href="https://joki-pelaihari-v2.vercel.app/"'
+          echo "LIVE SEO VERIFIED"
