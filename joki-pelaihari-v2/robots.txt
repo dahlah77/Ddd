@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://joki-pelaihari-v2.vercel.app/sitemap.xml
