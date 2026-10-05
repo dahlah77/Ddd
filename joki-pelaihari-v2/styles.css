@@ -131,3 +131,14 @@
 #harga .form-card .fieldgrid{width:100%}
 #harga .control:disabled{cursor:not-allowed}
 @media(max-width:960px){#harga .form-card{min-height:auto}}
+
+/* simplified reviews */
+.review-simple-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:22px}
+.review-simple-head h2{font-family:Georgia,"Times New Roman",serif;font-size:clamp(36px,4vw,54px);line-height:1;margin:0 0 8px;letter-spacing:-.035em}
+.review-simple-head p{margin:0;color:var(--muted);font-size:14px}
+.review-grid-simple{margin-top:0}
+.review-grid-simple .review-card{min-height:160px;padding:18px}
+.review-grid-simple .review-card p{margin:12px 0 18px;font-size:14px;line-height:1.55}
+.review-grid-simple .stars{font-size:12px;letter-spacing:.08em}
+.review-more{text-align:center;margin-top:18px}
+@media(max-width:640px){.review-simple-head{align-items:flex-start;flex-direction:column}.review-simple-head .btn{width:100%}.review-grid-simple .review-card{min-height:0}}

@@ -121,8 +121,22 @@ const services=['Formatting','Konsultasi','PPT Akademik','SPSS & Analisis Data',
 const seedReviews=institutions.slice(0,30).map((x,i)=>({name:['A•••','R•••','N•••','D•••','M•••'][i%5],institution:x[0],level:(x[1]||'S1').split('/')[0],service:services[i%services.length],rating:[5,4,5,5,4][i%5],text:seedTexts[i%seedTexts.length]}));
 const reviewKey='jp_reviews_local_v2';
 function esc(s){return String(s||'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#039;'}[m]))}
-function loadReviews(){let own=[];try{own=JSON.parse(localStorage.getItem(reviewKey)||'[]')}catch(e){}const all=own.slice().reverse().concat(seedReviews),grid=$('#reviewGrid');if(!grid)return;grid.innerHTML=all.map(r=>'<article class="glass review-card"><div><div class="stars">'+'★'.repeat(r.rating)+'☆'.repeat(5-r.rating)+'</div><p>“'+esc(r.text)+'”</p></div><div class="review-meta">'+esc(r.name)+' • '+esc(r.level)+' • '+esc(r.institution)+'<br>'+esc(r.service||'')+'</div></article>').join('')}
-if($('#institutionChips'))$('#institutionChips').innerHTML=institutions.map(x=>'<span class="institution-chip">'+esc(x[0])+' · '+esc(x[1])+'</span>').join('');
+let reviewsExpanded=false;
+function loadReviews(){
+  let own=[];
+  try{own=JSON.parse(localStorage.getItem(reviewKey)||'[]')}catch(e){}
+  const all=own.slice().reverse().concat(seedReviews);
+  const grid=$('#reviewGrid');
+  const toggle=$('#reviewToggle');
+  if(!grid)return;
+  const visible=reviewsExpanded?all:all.slice(0,6);
+  grid.innerHTML=visible.map(r=>'<article class="glass review-card"><div class="stars">'+'★'.repeat(r.rating)+'</div><p>“'+esc(r.text)+'”</p><div class="review-meta">'+esc(r.name)+' • '+esc(r.level)+'<br>'+esc(r.institution)+'</div></article>').join('');
+  if(toggle){
+    toggle.style.display=all.length>6?'inline-flex':'none';
+    toggle.textContent=reviewsExpanded?'Tampilkan Lebih Sedikit':'Lihat Semua Review';
+  }
+}
+if($('#reviewToggle'))$('#reviewToggle').addEventListener('click',()=>{reviewsExpanded=!reviewsExpanded;loadReviews()});
 if($('#reviewForm'))$('#reviewForm').addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(e.currentTarget),r={name:fd.get('name')||'Anonim',institution:fd.get('institution')||'Institusi tidak ditampilkan',level:fd.get('level')||'',service:fd.get('service')||'',rating:Number(fd.get('rating')||5),text:fd.get('text')||'',createdAt:new Date().toISOString()};let a=[];try{a=JSON.parse(localStorage.getItem(reviewKey)||'[]')}catch(x){}a.push(r);localStorage.setItem(reviewKey,JSON.stringify(a));e.currentTarget.reset();closeModal('reviewModal');loadReviews();alert('Review berhasil disimpan.')});
 if($('#orderForm'))$('#orderForm').addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(e.currentTarget),id='JP-'+new Date().getFullYear()+'-'+Math.floor(10000+Math.random()*89999),msg='Halo Joki Pelaihari, saya ingin membuat order.\n\nOrder ID: '+id+'\nNama: '+fd.get('name')+'\nJenjang: '+fd.get('level')+'\nLayanan: '+fd.get('service')+'\nDeadline: '+fd.get('deadline')+'\n\nBrief: '+fd.get('brief');closeModal('orderModal');wa(msg)});
 initEstimator();renderTable('general');loadReviews();
