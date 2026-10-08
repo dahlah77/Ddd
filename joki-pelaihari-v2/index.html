@@ -220,4 +220,16 @@
 <div class="modal" id="orderModal"><div class="glass modal-card"><div class="modal-head"><div><div class="eyebrow">Order</div><h2 style="margin:5px 0">Kirim brief</h2></div><button class="close" onclick="closeModal('orderModal')">×</button></div><form id="orderForm" class="fieldgrid"><div class="field"><label>Nama</label><input class="control" name="name" required></div><div class="field"><label>Jenjang</label><select class="control" name="level"><option>SMA/SMK</option><option>D3/D4</option><option selected>S1</option><option>S2</option><option>S3</option></select></div><div class="field"><label>Layanan</label><select class="control" name="service"><option>Skripsi / TA</option><option>SPSS</option><option>Formatting</option><option>Proofreading</option><option>PPT</option><option>Proposal / PKL</option><option>Konsultasi</option></select></div><div class="field"><label>Deadline</label><input class="control" type="date" name="deadline" required></div><div class="field" style="grid-column:1/-1"><label>Brief</label><textarea class="control" name="brief" rows="5" required></textarea></div><div style="grid-column:1/-1"><button class="btn gold" style="width:100%">Lanjut ke WhatsApp</button></div></form></div></div>
 <div class="modal" id="termsModal"><div class="glass modal-card"><div class="modal-head"><div><div class="eyebrow">Legal</div><h2 style="margin:5px 0">Terms & Conditions</h2></div><button class="close" onclick="closeModal('termsModal')">×</button></div><div class="meta" style="line-height:1.8"><p>Harga pada website merupakan acuan; final quote mengikuti brief, kompleksitas, volume, kondisi file, dan deadline.</p><p>DP minimum 50% setelah scope disepakati. Deadline dihitung setelah brief/file lengkap dan pembayaran awal diterima.</p><p>Revisi minor 1–2 kali mengikuti scope. Instruksi baru atau perubahan besar dapat dikenakan biaya tambahan.</p><p>Layanan ditujukan untuk pendampingan, editing, formatting, analisis, konsultasi dan kebutuhan pendukung. Pengguna bertanggung jawab atas penggunaan akhir hasil pekerjaan serta kebijakan institusinya.</p><p>Tidak menerima impersonasi, pengerjaan ujian aktif, pemalsuan dokumen, atau fabrikasi data penelitian.</p></div></div></div>
 <div class="modal" id="privacyModal"><div class="glass modal-card"><div class="modal-head"><div><div class="eyebrow">Legal</div><h2 style="margin:5px 0">Privacy</h2></div><button class="close" onclick="closeModal('privacyModal')">×</button></div><div class="meta" style="line-height:1.8"><p>Data order dipakai untuk memproses permintaan, komunikasi, dukungan, keamanan, dan administrasi layanan.</p><p>File customer pada production harus disimpan pada private storage dan tidak dipublikasikan. Akses file menggunakan izin terbatas/signed URL.</p><p>Metadata order dapat disimpan untuk catatan bisnis. Review publik hanya menampilkan informasi yang disetujui untuk dipublikasikan.</p></div></div></div>
-<script src="./app.js"></script></body></html>
+<script src="./app.js"></script><!-- High-resolution brand logo loader -->
+<script>
+(function(){
+  var highResLogo = new Image();
+  var logoUrl = "./joki-pelaihari-logo.png?v=2048";
+  highResLogo.onload = function(){
+    document.querySelectorAll("nav.nav .brand img, .hero-mark-logo, footer .brand img").forEach(function(el){
+      el.src = logoUrl;
+    });
+  };
+  highResLogo.src = logoUrl;
+})();
+</script></body></html>
