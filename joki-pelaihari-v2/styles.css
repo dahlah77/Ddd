@@ -58,6 +58,27 @@
   line-height:1.25;
   letter-spacing:.11em;
   text-transform:uppercase;
+  /* Animated metallic-gold highlight, scoped to the brand caption only. */
+  background-image:linear-gradient(110deg,#bc8a32 0%,#e8bc61 24%,#fff6d1 38%,#ffedb6 43%,#c39135 55%,#e6b95c 77%,#bc8a32 100%);
+  background-size:240% 100%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 7px rgba(245,196,93,.19));
+  animation:jpCaptionGoldShimmer 5s ease-in-out infinite;
+}
+@keyframes jpCaptionGoldShimmer{
+  0%,12%{background-position:100% 50%}
+  50%{background-position:0% 50%}
+  88%,100%{background-position:100% 50%}
+}
+@media(prefers-reduced-motion:reduce){
+  .hero-mark-caption{
+    animation:none;
+    background:none;
+    -webkit-text-fill-color:var(--gold2);
+    filter:none;
+  }
 }
 .news-ticker{
   position:relative;
