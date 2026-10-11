@@ -349,23 +349,75 @@ const seedTexts=['Formatting-nya rapi dan detail kecilnya diperhatikan','Komunik
 const services=['Formatting','Konsultasi','PPT Akademik','SPSS & Analisis Data','Proofreading','Revisi Dokumen'];
 const seedReviews=institutions.slice(0,30).map((x,i)=>({name:['A•••','R•••','N•••','D•••','M•••'][i%5],institution:x[0],level:(x[1]||'S1').split('/')[0],service:services[i%services.length],rating:[5,4,5,5,4][i%5],text:seedTexts[i%seedTexts.length]}));
 const reviewKey='jp_reviews_local_v2';
-function esc(s){return String(s||'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#039;'}[m]))}
+const jpStore={enabled:false,approved:[]};
+window.jpPersistentEnabled=false;
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 let reviewsExpanded=false;
+
 function loadReviews(){
   let own=[];
   try{own=JSON.parse(localStorage.getItem(reviewKey)||'[]')}catch(e){}
-  const all=own.slice().reverse().concat(seedReviews);
-  const grid=$('#reviewGrid');
-  const toggle=$('#reviewToggle');
+  const all=jpStore.enabled?jpStore.approved.slice():own.slice().reverse().concat(seedReviews);
+  const grid=$('#reviewGrid'),toggle=$('#reviewToggle');
   if(!grid)return;
   const visible=reviewsExpanded?all:all.slice(0,6);
-  grid.innerHTML=visible.map(r=>'<article class="glass review-card"><div class="stars">'+'★'.repeat(r.rating)+'</div><p>“'+esc(r.text)+'”</p><div class="review-meta">'+esc(r.name)+' • '+esc(r.level)+'<br>'+esc(r.institution)+'</div></article>').join('');
-  if(toggle){
-    toggle.style.display=all.length>6?'inline-flex':'none';
-    toggle.textContent=reviewsExpanded?'Tampilkan Lebih Sedikit':'Lihat Semua Review';
-  }
+  grid.innerHTML=visible.map(r=>'<article class="glass review-card"><div class="stars">'+'★'.repeat(r.rating||5)+'</div><p>“'+esc(r.text)+'”</p><div class="review-meta">'+esc(r.name)+' • '+esc(r.level)+'<br>'+esc(r.institution)+'</div></article>').join('');
+  if(toggle){toggle.style.display=all.length>6?'inline-flex':'none';toggle.textContent=reviewsExpanded?'Tampilkan Lebih Sedikit':'Lihat Semua Review';}
+}
+async function jpJson(url,body){
+ const r=await fetch(url,{method:body===undefined?'GET':'POST',credentials:'same-origin',cache:'no-store',headers:body===undefined?{}:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body),keepalive:body!==undefined});
+ let d=null;try{d=await r.json()}catch{}
+ if(!r.ok)throw new Error(d?.error||'Permintaan gagal');
+ return d;
+}
+async function syncPersistent(){
+ try{
+  const status=await jpJson('/api/public?resource=status');
+  if(!status.enabled)return;
+  jpStore.enabled=true;window.jpPersistentEnabled=true;
+  try{
+   const rows=await jpJson('/api/public?resource=reviews');
+   jpStore.approved=Array.isArray(rows.rows)?rows.rows:[];
+   loadReviews();
+  }catch(e){console.warn('Review data unavailable',e.message)}
+  try{
+   const data=await jpJson('/api/public?resource=prices');
+   if(data?.prices&&typeof data.prices==='object'){
+    Object.assign(pricing,data.prices);
+    const active=$('.price-tabs .tab.active');
+    renderTable(active?.dataset.cat||'general');
+    calc();
+   }
+  }catch(e){/* Use the published default prices if no override exists */}
+ }catch(e){/* Database not configured: preserve original public behavior */}
 }
 if($('#reviewToggle'))$('#reviewToggle').addEventListener('click',()=>{reviewsExpanded=!reviewsExpanded;loadReviews()});
-if($('#reviewForm'))$('#reviewForm').addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(e.currentTarget),r={name:fd.get('name')||'Anonim',institution:fd.get('institution')||'Institusi tidak ditampilkan',level:fd.get('level')||'',service:fd.get('service')||'',rating:Number(fd.get('rating')||5),text:fd.get('text')||'',createdAt:new Date().toISOString()};let a=[];try{a=JSON.parse(localStorage.getItem(reviewKey)||'[]')}catch(x){}a.push(r);localStorage.setItem(reviewKey,JSON.stringify(a));e.currentTarget.reset();closeModal('reviewModal');loadReviews();alert('Review berhasil disimpan')});
-if($('#orderForm'))$('#orderForm').addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(e.currentTarget),id='JP-'+new Date().getFullYear()+'-'+Math.floor(10000+Math.random()*89999),msg='Halo Joki Pelaihari, saya ingin membuat order\n\nOrder ID: '+id+'\nNama: '+fd.get('name')+'\nJenjang: '+fd.get('level')+'\nLayanan: '+fd.get('service')+'\nDeadline: '+fd.get('deadline')+'\n\nKesepakatan: '+fd.get('kesepakatan');closeModal('orderModal');wa(msg)});
-initEstimator();renderTable('general');loadReviews();
+if($('#reviewForm'))$('#reviewForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const form=e.currentTarget,fd=new FormData(form);
+ const r={name:fd.get('name')||'Anonim',institution:fd.get('institution')||'Institusi tidak ditampilkan',level:fd.get('level')||'',service:fd.get('service')||'',rating:Number(fd.get('rating')||5),text:fd.get('text')||'',createdAt:new Date().toISOString()};
+ if(jpStore.enabled){
+  const btn=form.querySelector('button[type="submit"],button:not([type])');if(btn)btn.disabled=true;
+  try{
+   await jpJson('/api/public?resource=reviews',r);
+   form.reset();closeModal('reviewModal');
+   alert('Review terkirim dan menunggu moderasi admin');
+  }catch(e){alert('Review belum terkirim: '+e.message)}
+  finally{if(btn)btn.disabled=false}
+ }else{
+  let a=[];try{a=JSON.parse(localStorage.getItem(reviewKey)||'[]')}catch(x){}
+  a.push(r);localStorage.setItem(reviewKey,JSON.stringify(a));
+  form.reset();closeModal('reviewModal');loadReviews();
+  alert('Review disimpan di browser ini dan belum tersinkron dengan admin');
+ }
+});
+if($('#orderForm'))$('#orderForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const form=e.currentTarget,fd=new FormData(form);
+ const id='JP-'+new Date().getFullYear()+'-'+Math.floor(10000+Math.random()*89999);
+ const order={code:id,name:fd.get('name'),level:fd.get('level'),service:fd.get('service'),deadline:fd.get('deadline'),kesepakatan:fd.get('kesepakatan')};
+ const msg='Halo Joki Pelaihari, saya ingin membuat order\n\nOrder ID: '+id+'\nNama: '+order.name+'\nJenjang: '+order.level+'\nLayanan: '+order.service+'\nDeadline: '+order.deadline+'\n\nKesepakatan: '+order.kesepakatan;
+ if(jpStore.enabled)jpJson('/api/public?resource=orders',order).catch(e=>console.warn('Simpan pesanan gagal',e.message));
+ closeModal('orderModal');wa(msg);
+});
+initEstimator();renderTable('general');loadReviews();syncPersistent();

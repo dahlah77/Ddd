@@ -52,7 +52,7 @@ export default async function handler(req,res){
    }
    if(resource==='dashboard'||resource==='analytics'){
     const [orders,reviews,events]=await Promise.all([
-     db('jp_orders',{query:{select:'id,total,status,payment_status,created_at',order:'created_at.desc',limit:'1000'}}),
+     db('jp_orders',{query:{select:'id,code,customer_name,service,level,total,status,payment_status,created_at',order:'created_at.desc',limit:'1000'}}),
      db('jp_reviews',{query:{select:'id,status,created_at',order:'created_at.desc',limit:'1000'}}),
      db('jp_events',{query:{select:'event_type,created_at',order:'created_at.desc',limit:'1000'}})
     ]);

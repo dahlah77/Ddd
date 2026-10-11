@@ -91,6 +91,6 @@ export async function audit(actor,action,entity,entityId){
  try{await db('jp_audit_logs',{method:'POST',body:{actor_id:actor,action,entity,entity_id:entityId||null}});}catch{}
 }
 export function fail(res,e){
- const status=[400,401,403,404,405,413,415,429,503].includes(e?.status)?e.status:500;
+ const status=[400,401,403,404,405,409,413,415,429,503].includes(e?.status)?e.status:500;
  return send(res,status,{error:status===500?'Terjadi kesalahan server':e?.message||'Permintaan gagal'});
 }

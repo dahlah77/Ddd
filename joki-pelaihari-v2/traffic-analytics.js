@@ -5,8 +5,26 @@
 (function(){
   'use strict';
   function track(name,data){
-    if(typeof window.va!=='function')return;
-    try{window.va('event',{name:name,data:data||{}});}catch(_){}
+    if(typeof window.va==='function'){
+      try{window.va('event',{name:name,data:data||{}});}catch(_){}
+    }
+    if(!window.jpPersistentEnabled)return;
+    const eventNames={
+      'Instagram Click':'instagram_click',
+      'WhatsApp Click':'whatsapp_click',
+      'Price Table Viewed':'price_view',
+      'Price Calculator Used':'calculator_use',
+      'Order Form Opened':'order_open',
+      'Order Form Submitted':'order_submit',
+      'Review Submitted':'review_submit'
+    };
+    const event_type=eventNames[name];
+    if(!event_type)return;
+    try{
+      const blob=new Blob([JSON.stringify({event_type,source:'website'})],{type:'application/json'});
+      if(navigator.sendBeacon)navigator.sendBeacon('/api/public?resource=event',blob);
+      else fetch('/api/public?resource=event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event_type,source:'website'}),keepalive:true}).catch(()=>{});
+    }catch(_){}
   }
   document.addEventListener('click',function(event){
     const node=event.target && event.target.closest && event.target.closest('a,button,[data-wa],.tab');
@@ -24,7 +42,7 @@
     }
     if(node.matches('.tab')){
       const category=node.getAttribute('data-cat');
-      if(['general','spss','qualitative','transcript','ppt','consultation'].includes(category)){
+      if(['general','academic','proposal','internship','spss','qualitative','transcript','formatting','proofreading','ppt','consultation','digital','express'].includes(category)){
         track('Price Table Viewed',{category:category});
       }
     }
