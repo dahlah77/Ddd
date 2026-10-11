@@ -53,7 +53,7 @@ const TASK_LEVELS=[['light','Ringan'],['medium','Sedang'],['complex','Kompleks']
 const PPT_GUIDE={
   light:'≤5 slide; layout sederhana',
   medium:'6–10 slide; tata letak beragam, diagram, dan visual tambahan',
-  complex:'11–20 slide; banyak visual/animasi, atau desain premium. >20 slide dihitung sesuai scope'
+  complex:'11–20 slide; banyak visual/animasi, atau desain premium >20 slide dihitung sesuai scope'
 };
 const ACADEMIC_GUIDE={
   'BAB I':'Pendahuluan: latar belakang masalah, rumusan masalah, tujuan dan manfaat penelitian Kelengkapan disesuaikan pedoman kampus',
