@@ -4,116 +4,124 @@ const ua=navigator.userAgent,platform=navigator.platform||'';
 const apple=/iPhone|iPad|iPod/.test(ua)||(/Mac/.test(platform)&&navigator.maxTouchPoints<=1)||(platform==='MacIntel'&&navigator.maxTouchPoints>1);
 document.documentElement.dataset.platform=apple?'apple':'universal';
 const pricing=window.__PRICING__||{}, institutions=window.__INSTITUTIONS__||[];
+const TASK_KINDS={
+  word:{name:'Word / Google Docs',priced:true,light:'≤10 halaman: ketik, format dasar, dokumen sederhana.',medium:'11–20 halaman: tabel, gambar, heading, sitasi.',complex:'>20 halaman atau format khusus: daftar isi otomatis, referensi, banyak tabel.'},
+  pdf:{name:'PDF',priced:true,light:'≤10 halaman: edit, gabung, pisah, konversi PDF sederhana yang bisa diedit.',medium:'11–20 halaman: penataan, perbaikan teks dan format dokumen editable.',complex:'PDF panjang, hasil scan, OCR atau layout rumit memerlukan pengecekan file sebelum harga final.'},
+  excel:{name:'Excel / Google Sheets',priced:false,light:'1–2 sheet: input data, SUM, AVERAGE dan tabel sederhana.',medium:'3–5 sheet: IF, lookup, grafik dan rekap antar-sheet.',complex:'Dashboard, PivotTable, otomatisasi, atau banyak sumber data.'},
+  web:{name:'Website / HTML-CSS-JS',priced:false,light:'Satu halaman statis tanpa database.',medium:'Beberapa halaman responsif dengan navigasi dan formulir sederhana.',complex:'Login, database, dashboard admin, API atau integrasi.'},
+  design:{name:'Canva / Desain',priced:false,light:'Satu poster atau edit template sederhana.',medium:'Beberapa desain dan variasi layout.',complex:'Paket identitas visual atau aset/desain khusus.'},
+  other:{name:'Aplikasi / File lainnya',priced:false,light:'Satu pekerjaan sederhana tanpa fitur khusus.',medium:'Beberapa komponen dengan pengolahan dan revisi.',complex:'Integrasi, banyak komponen, atau fitur teknis khusus.'}
+};
+const TASK_LEVELS=[['light','Ringan'],['medium','Sedang'],['complex','Kompleks']];
+
 function initEstimator(){
   const level=$('#level'),part=$('#part'),method=$('#method'),deadline=$('#deadline');
-  if(!level||!part||!method||!deadline)return;
-
-  const generalMap=Object.fromEntries((pricing.general||[]).map(x=>[x.level,x]));
-  const proposalMap=Object.fromEntries((pricing.proposal||[]).map(x=>[x.level,x.price]));
-  const internshipMap=Object.fromEntries((pricing.internship||[]).map(x=>[x.level,x]));
-
-  const levels=(pricing.general||[]).map(x=>x.level);
+  const type=$('#fileType'),pptStyle=$('#pptStyle'),hint=$('#taskScopeHelp');
+  if(!level||!part||!method||!deadline||!type)return;
   level.innerHTML='';
-  levels.forEach(l=>level.add(new Option(l,l)));
-  level.value=levels.includes('S1')?'S1':(levels[0]||'');
+  (pricing.general||[]).forEach(row=>level.add(new Option(row.level,row.level)));
+  level.value='S1';
 
-  const addOption=(label,source,key,extra='')=>{
-    const o=new Option(label,source+'|'+key+(extra?'|'+extra:''));
-    part.add(o);
+  const addOption=(label,source,key)=>part.add(new Option(label,source+'|'+key));
+
+  const updateHelp=()=>{
+    const kind=type.value,source=(part.value||'').split('|')[0],key=(part.value||'').split('|')[1];
+    const meta=TASK_KINDS[kind];
+    if(meta && key in meta){
+      hint.textContent=meta[key]+(meta.priced?' Acuan harga Umum untuk dokumen yang bisa diedit; kondisi dan tingkat kesulitan file tetap dicek.':' Belum ada tarif tetap: kirim brief untuk penawaran.');
+    }else if(kind==='ppt'){
+      hint.textContent='Tarif mengikuti jumlah slide dan paket Standard/Premium pada Price Table. Tambahan slide dan animasi khusus dihitung sesuai scope.';
+    }else{
+      hint.textContent='Pilih bagian pekerjaan. Harga mengikuti daftar layanan dan akan disesuaikan dengan brief.';
+    }
   };
 
   const fill=()=>{
-    const l=level.value;
+    const kind=type.value,l=level.value;
     part.innerHTML='';
-
-    if(generalMap[l]){
-      addOption('Tugas Ringan ≤10 hlm','general','light');
-      addOption('Tugas Sedang 11–20 hlm','general','medium');
-      addOption('Tugas Kompleks >20 hlm','general','complex');
-    }
-
-    const academic=pricing.academic?.[l];
-    if(academic){
+    if(kind==='academic'){
+      const academic=pricing.academic?.[l]||{};
       Object.keys(academic).forEach(k=>addOption(k,'academic',k));
+      const prop=(pricing.proposal||[]).find(x=>x.level===l);
+      if(prop)addOption('Proposal Penelitian','proposal','price');
+      const internship=(pricing.internship||[]).find(x=>x.level===l);
+      if(internship){
+        addOption('PKL / Magang — Review & Revisi','internship','review');
+        addOption('PKL / Magang — Formatting','internship','formatting');
+      }
+      if(['D3/D4','S1','S2','S3'].includes(l)){
+        (pricing.spssPackages||[]).forEach((x,i)=>addOption('SPSS — '+x.name,'spssPackage',String(i)));
+      }
+    }else if(kind==='ppt'){
+      (pricing.ppt||[]).forEach((row,i)=>{
+        if(row.suffix==='/slide')return;
+        addOption(row.name+' — Presentasi','ppt',String(i));
+      });
+      addOption('>20 slide / presentasi khusus — Konsultasi','custom','ppt');
+    }else if(TASK_KINDS[kind]){
+      TASK_LEVELS.forEach(([key,label])=>addOption(label+' — '+(kind==='word'||kind==='pdf'?(key==='light'?'≤10 halaman':key==='medium'?'11–20 halaman':'>20 halaman / fitur rumit'):'berdasarkan fitur & volume'),TASK_KINDS[kind].priced?'general':'custom',key));
     }
-
-    if(proposalMap[l]) addOption('Proposal Penelitian','proposal','price');
-
-    if(internshipMap[l]){
-      addOption('PKL / Magang — Review & Revisi','internship','review');
-      addOption('PKL / Magang — Formatting','internship','formatting');
-    }
-
-    if(['D3/D4','S1','S2','S3'].includes(l)){
-      (pricing.spssPackages||[]).forEach((x,i)=>addOption('SPSS — '+x.name,'spssPackage',String(i)));
-    }
-
-    if(part.options.length) part.selectedIndex=0;
+    if(part.options.length)part.selectedIndex=0;
+    $('#pptStyleField').hidden=kind!=='ppt';
+    $('#methodField').hidden=kind!=='academic';
     syncMethod();
+    updateHelp();
     calc();
   };
-
   const syncMethod=()=>{
-    const source=(part.value||'').split('|')[0];
-    const methodSpecific=source==='academic';
-    method.disabled=!methodSpecific;
-    method.style.opacity=methodSpecific?'1':'.58';
-    method.title=methodSpecific?'Pilih metode penelitian':'Metode tidak memengaruhi harga untuk jenis pekerjaan ini';
+    const source=(part.value||'').split('|')[0],isAcademic=type.value==='academic'&&source==='academic';
+    method.disabled=!isAcademic;
+    method.title=isAcademic?'Pilih metode penelitian':'Metode hanya diperlukan untuk pekerjaan akademik';
   };
-
   level.addEventListener('change',fill);
-  part.addEventListener('change',()=>{syncMethod();calc()});
+  type.addEventListener('change',fill);
+  part.addEventListener('change',()=>{syncMethod();updateHelp();calc()});
+  pptStyle?.addEventListener('change',calc);
   method.addEventListener('change',calc);
   deadline.addEventListener('change',calc);
   fill();
 }
 
 function getEstimatorBase(){
-  const l=$('#level')?.value;
-  const raw=$('#part')?.value||'';
-  const [source,key]=raw.split('|');
+  const l=$('#level')?.value,kind=$('#fileType')?.value;
+  const [source,key]=($('#part')?.value||'').split('|');
   const method=$('#method')?.value||'quant';
-
-  if(source==='general'){
+  if(source==='general' && TASK_KINDS[kind]?.priced){
     const row=(pricing.general||[]).find(x=>x.level===l);
-    return Number(row?.[key]||0);
+    return row?Number(row[key]):null;
   }
-  if(source==='academic') return Number(pricing.academic?.[l]?.[key]?.[method]||0);
-  if(source==='proposal'){
-    const row=(pricing.proposal||[]).find(x=>x.level===l);
-    return Number(row?.price||0);
-  }
-  if(source==='internship'){
-    const row=(pricing.internship||[]).find(x=>x.level===l);
-    return Number(row?.[key]||0);
-  }
-  if(source==='spssPackage'){
-    return Number(pricing.spssPackages?.[Number(key)]?.price||0);
-  }
-  return 0;
+  if(source==='academic')return pricing.academic?.[l]?.[key]?.[method]??null;
+  if(source==='proposal')return (pricing.proposal||[]).find(x=>x.level===l)?.price??null;
+  if(source==='internship')return (pricing.internship||[]).find(x=>x.level===l)?.[key]??null;
+  if(source==='spssPackage')return pricing.spssPackages?.[Number(key)]?.price??null;
+  if(source==='ppt')return pricing.ppt?.[Number(key)]?.[$('#pptStyle')?.value||'standard']??null;
+  return null;
 }
 
 function calc(){
-  const level=$('#level')?.value;
-  const part=$('#part');
-  const method=$('#method')?.value||'quant';
-  const di=Number($('#deadline')?.value||0);
+  const level=$('#level')?.value,part=$('#part'),kind=$('#fileType')?.value||'word';
   if(!level||!part?.value)return;
-
-  const base=getEstimatorBase();
+  const method=$('#method')?.value||'quant',di=Number($('#deadline')?.value||0);
   const ex=pricing.express?.[di]||pricing.express?.[0]||{label:'≥4 hari',multiplier:1,surcharge:0};
-  const total=Math.round(base*ex.multiplier);
-  const selectedLabel=part.options[part.selectedIndex]?.text||'';
-
-  if($('#base'))$('#base').textContent=fmt(base);
-  if($('#express'))$('#express').textContent=ex.surcharge?'+'+ex.surcharge+'%':'Normal';
-  if($('#total'))$('#total').textContent=fmt(total);
-  if($('#calcNote'))$('#calcNote').textContent=ex.surcharge?'Express '+ex.label+' sudah termasuk dalam estimasi.':'Deadline normal ≥4 hari.';
-  if($('#waEstimate'))$('#waEstimate').dataset.msg='Halo Joki Pelaihari, saya ingin konsultasi.\n\nJenjang: '+level+'\nBagian / Jenis Pekerjaan: '+selectedLabel+'\nMetode: '+(method==='quant'?'Kuantitatif':'Kualitatif')+'\nDeadline: '+ex.label+'\nEstimasi: '+fmt(total);
+  const raw=getEstimatorBase(),known=raw!==null && Number.isFinite(Number(raw)) && Number(raw)>=0;
+  const base=known?Number(raw):null;
+  const total=known?Math.round(base*ex.multiplier):null;
+  const label=part.options[part.selectedIndex]?.text||'';
+  if($('#base'))$('#base').textContent=known?fmt(base):'Sesuai brief';
+  if($('#express'))$('#express').textContent=known?(ex.surcharge?'+'+ex.surcharge+'%':'Normal'):'Dikonfirmasi';
+  if($('#total'))$('#total').textContent=known?fmt(total):'Konsultasi';
+  if($('#calcNote'))$('#calcNote').textContent=known?(ex.surcharge?'Express '+ex.label+' termasuk dalam estimasi.':'Estimasi harga dasar; deadline normal ≥4 hari.'):'Belum ada tarif tetap untuk pekerjaan ini. Kirim detail file, fitur, volume, dan deadline untuk mendapatkan harga.';
+  if($('#waEstimate')){
+    const detail=['Halo Joki Pelaihari, saya ingin konsultasi.','','Jenjang: '+level,'Jenis file / platform: '+($('#fileType')?.options[$('#fileType').selectedIndex]?.text||kind),'Tingkat / pekerjaan: '+label];
+    if(kind==='academic' && ($('#part')?.value||'').startsWith('academic|'))detail.push('Metode: '+(method==='quant'?'Kuantitatif':'Kualitatif'));
+    if(kind==='ppt')detail.push('Paket desain: '+($('#pptStyle')?.value||'standard'));
+    detail.push('Deadline: '+ex.label,'Estimasi: '+(known?fmt(total):'Mohon penawaran sesuai brief'));
+    $('#waEstimate').dataset.msg=detail.join('\n');
+  }
 }
 
 $$('.tab').forEach(b=>b.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderTable(b.dataset.cat)}));
-function renderTable(cat){const box=$('#priceTable');if(!box)return;let rows='',head='';if(cat==='general'){head='<tr><th>Jenjang</th><th>Ringan ≤10 hlm</th><th>Sedang 11–20 hlm</th><th>Kompleks >20 hlm</th></tr>';rows=(pricing.general||[]).map(x=>'<tr><td>'+x.level+'</td><td>'+fmt(x.light)+'</td><td>'+fmt(x.medium)+'</td><td>'+fmt(x.complex)+'</td></tr>').join('')}else if(cat==='spss'){head='<tr><th>Jenis analisis</th><th>Harga</th></tr>';rows=(pricing.spss||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+'</td></tr>').join('')}else if(cat==='qualitative'){head='<tr><th>Layanan</th><th>Harga</th></tr>';rows=(pricing.qualitative||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+(x.suffix||'')+'</td></tr>').join('')}else if(cat==='transcript'){head='<tr><th>Durasi</th><th>Harga</th></tr>';rows=(pricing.transcript||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+(x.suffix||'')+'</td></tr>').join('')}else if(cat==='ppt'){head='<tr><th>Paket</th><th>Standard</th><th>Premium</th></tr>';rows=(pricing.ppt||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.standard)+(x.suffix||'')+'</td><td>'+fmt(x.premium)+(x.suffix||'')+'</td></tr>').join('')}else{head='<tr><th>Durasi</th><th>Harga</th></tr>';rows=(pricing.consultation||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+'</td></tr>').join('')}box.innerHTML='<table><thead>'+head+'</thead><tbody>'+rows+'</tbody></table>'}
+function renderTable(cat){const box=$('#priceTable');if(!box)return;const guide=$('#taskGuide');if(guide)guide.hidden=cat!=='general';let rows='',head='';if(cat==='general'){head='<tr><th>Jenjang</th><th>Ringan<br>≤10 hlm</th><th>Sedang<br>11–20 hlm</th><th>Kompleks<br>>20 hlm / khusus</th></tr>';rows=(pricing.general||[]).map(x=>'<tr><td>'+x.level+'</td><td>'+fmt(x.light)+'</td><td>'+fmt(x.medium)+'</td><td>'+fmt(x.complex)+'</td></tr>').join('')}else if(cat==='spss'){head='<tr><th>Jenis analisis</th><th>Harga</th></tr>';rows=(pricing.spss||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+'</td></tr>').join('')}else if(cat==='qualitative'){head='<tr><th>Layanan</th><th>Harga</th></tr>';rows=(pricing.qualitative||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+(x.suffix||'')+'</td></tr>').join('')}else if(cat==='transcript'){head='<tr><th>Durasi</th><th>Harga</th></tr>';rows=(pricing.transcript||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+(x.suffix||'')+'</td></tr>').join('')}else if(cat==='ppt'){head='<tr><th>Paket</th><th>Standard</th><th>Premium</th></tr>';rows=(pricing.ppt||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.standard)+(x.suffix||'')+'</td><td>'+fmt(x.premium)+(x.suffix||'')+'</td></tr>').join('')}else{head='<tr><th>Durasi</th><th>Harga</th></tr>';rows=(pricing.consultation||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+'</td></tr>').join('')}box.innerHTML='<table><thead>'+head+'</thead><tbody>'+rows+'</tbody></table>'}
 function openModal(id){const el=$('#'+id);if(el){el.classList.add('show');document.body.style.overflow='hidden'}} function closeModal(id){const el=$('#'+id);if(el){el.classList.remove('show');document.body.style.overflow=''}} window.openModal=openModal;window.closeModal=closeModal;$$('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal(m.id)}));
 function wa(msg){msg=msg||'Halo Joki Pelaihari, saya ingin konsultasi.';window.open('https://wa.me/6285651498728?text='+encodeURIComponent(msg),'_blank','noopener')} $$('[data-wa]').forEach(b=>b.addEventListener('click',()=>wa(b.dataset.msg)));if($('#waEstimate'))$('#waEstimate').addEventListener('click',()=>wa($('#waEstimate').dataset.msg));
 const seedTexts=['Formatting-nya rapi dan detail kecilnya diperhatikan.','Komunikasinya jelas, revisi juga cepat ditanggapi.','PPT jadi jauh lebih clean dan enak dipresentasikan.','Olah data dan interpretasinya dibuat lebih gampang dipahami.','Proofreading-nya teliti dan catatan revisinya jelas.','Pengerjaan sesuai brief dan deadline yang disepakati.','Struktur dokumen jadi lebih konsisten dan rapi.','Bantu SPSS dari cleaning sampai interpretasi dengan runtut.','Konsultasi metode sangat membantu ngerapikan arah analisis.','Presentasi dibuat modern tanpa terasa seperti template pasaran.'];

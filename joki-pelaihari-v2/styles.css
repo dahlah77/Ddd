@@ -163,3 +163,25 @@
 .review-grid-simple .stars{font-size:12px;letter-spacing:.08em}
 .review-more{text-align:center;margin-top:18px}
 @media(max-width:640px){.review-simple-head{align-items:flex-start;flex-direction:column}.review-simple-head .btn{width:100%}.review-grid-simple .review-card{min-height:0}}
+
+/* File-specific task difficulty guidance - Word, PDF, Excel, PPT, Web, others */
+.estimator-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;width:100%}
+.estimator-fields .field{min-width:0}
+#harga .form-card{display:block;min-height:0}
+#harga .result-card{min-height:100%}
+.task-scope-help{margin:14px 0 0;padding:13px 15px;border:1px solid rgba(214,174,84,.27);border-radius:16px;color:#cdd4dc;background:rgba(214,174,84,.055);font-size:13px;line-height:1.65}
+.pricing-reference{margin-top:24px}
+.pricing-reference-head{margin-bottom:14px}
+.pricing-reference-head h3{font-size:clamp(20px,2.2vw,29px);margin:0 0 8px;letter-spacing:-.02em}
+.pricing-reference-head p,.task-guide-disclaimer{color:var(--muted);font-size:13px;line-height:1.65;margin:0}
+.task-guide-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.task-guide{padding:18px 20px;min-width:0}
+.task-guide summary{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;font-weight:750;color:#f2f2f0;list-style-position:inside;outline-offset:5px}
+.task-guide summary span{font-size:10px;color:var(--gold2);font-weight:600;white-space:nowrap;letter-spacing:.06em}
+.task-guide p{margin:13px 0 0;font-size:13px;line-height:1.57;color:#c4ced6}
+.task-guide p b{color:#f0d395;font-weight:700}
+.task-guide .task-custom-note{color:#d6b96d;font-size:12px}
+.task-guide-disclaimer{margin-top:16px}
+[hidden]{display:none!important}
+@media(max-width:960px){.task-guide-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.estimator-fields,.task-guide-grid{grid-template-columns:1fr}.task-guide{padding:15px 17px}#harga .result-price{font-size:clamp(35px,9vw,55px)}}
