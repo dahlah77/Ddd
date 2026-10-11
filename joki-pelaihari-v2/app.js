@@ -252,8 +252,97 @@ function calc(){
   }
 }
 
-$$('.tab').forEach(b=>b.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderTable(b.dataset.cat)}));
-function renderTable(cat){const box=$('#priceTable');if(!box)return;let rows='',head='';if(cat==='general'){head='<tr><th>Jenjang</th><th>Ringan<br>≤10 hlm</th><th>Sedang<br>11–20 hlm</th><th>Kompleks<br>>20 hlm / khusus</th></tr>';rows=(pricing.general||[]).map(x=>'<tr><td>'+x.level+'</td><td>'+fmt(x.light)+'</td><td>'+fmt(x.medium)+'</td><td>'+fmt(x.complex)+'</td></tr>').join('')}else if(cat==='spss'){head='<tr><th>Jenis analisis</th><th>Harga</th></tr>';rows=(pricing.spss||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+'</td></tr>').join('')}else if(cat==='qualitative'){head='<tr><th>Layanan</th><th>Harga</th></tr>';rows=(pricing.qualitative||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+(x.suffix||'')+'</td></tr>').join('')}else if(cat==='transcript'){head='<tr><th>Durasi</th><th>Harga</th></tr>';rows=(pricing.transcript||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+(x.suffix||'')+'</td></tr>').join('')}else if(cat==='ppt'){head='<tr><th>Paket</th><th>Standard</th><th>Premium</th></tr>';rows=(pricing.ppt||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.standard)+(x.suffix||'')+'</td><td>'+fmt(x.premium)+(x.suffix||'')+'</td></tr>').join('')}else{head='<tr><th>Durasi</th><th>Harga</th></tr>';rows=(pricing.consultation||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+'</td></tr>').join('')}box.innerHTML='<table><thead>'+head+'</thead><tbody>'+rows+'</tbody></table>'}
+/* Complete Price Table — values always read from window.__PRICING__. */
+const PRICE_CATEGORIES=['general','academic','proposal','internship','spss','qualitative','transcript','formatting','proofreading','ppt','consultation','digital','express'];
+const PRICE_NOTES={
+  general:'Acuan pekerjaan dokumen Word/Google Docs dan PDF yang dapat diedit. File scan/OCR, desain dan pekerjaan teknis khusus perlu penilaian brief.',
+  academic:'Tarif per BAB/paket menurut jenjang dan metode penelitian. Harga tidak mencakup pekerjaan di luar cakupan yang disepakati.',
+  proposal:'Tarif proposal berdasarkan jenjang. Ruang lingkup, referensi, dan format kampus perlu dikonfirmasi.',
+  internship:'Review/revisi dan formatting adalah jenis pekerjaan berbeda. Pilih layanan sesuai kebutuhan.',
+  spss:'Harga per uji dan harga paket adalah pilihan layanan tersendiri; tambahan uji di luar paket dihitung setelah konsultasi.',
+  qualitative:'Harga paket NVivo lengkap bertanda + merupakan tarif mulai dari; kompleksitas data menentukan penawaran akhir.',
+  transcript:'Untuk audio/video lebih dari 60 menit, harga dinyatakan per menit. Kualitas audio, bahasa, dan jumlah pembicara bisa memengaruhi harga final.',
+  formatting:'Tarif sesuai jenjang dan cakupan. Paket lengkap tidak otomatis ditambah tarif item yang sudah termasuk.',
+  proofreading:'Proofreading bahasa dihitung per halaman. Harga revisi berat bertanda + merupakan tarif mulai dari.',
+  ppt:'Harga Standard/Premium mengikuti jumlah slide. Baris tambahan slide dinyatakan per slide.',
+  consultation:'Tarif berdasarkan durasi/sesi konsultasi yang tercantum.',
+  digital:'Belum tersedia harga tetap untuk jenis pekerjaan digital ini. Kirim file atau rincian fitur, volume, output dan deadline untuk mendapatkan penawaran.',
+  express:'Biaya express adalah persentase tambahan terhadap harga dasar yang relevan, tergantung ketersediaan slot pengerjaan.'
+};
+const priceText=(value,suffix='')=>value===null||value===undefined?'Sesuai brief':fmt(value)+suffix;
+const priceTable=(headings,rows)=>'<table><thead><tr>'+headings.map(x=>'<th>'+safeText(x)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(cols=>'<tr>'+cols.map(v=>'<td>'+v+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
+const priceSectionTitle=name=>'<h3 class="price-group-label">'+safeText(name)+'</h3>';
+const priceAction=(name,cat)=>'<button type="button" class="price-action-link" data-price-target="'+safeText(cat)+'">'+safeText(name)+'</button>';
+
+function activatePriceTab(cat){
+  if(!PRICE_CATEGORIES.includes(cat))return;
+  $$('.price-tabs .tab').forEach(b=>{
+    const active=b.dataset.cat===cat;
+    b.classList.toggle('active',active);
+    b.setAttribute('aria-selected',String(active));
+  });
+  renderTable(cat);
+}
+$$('.price-tabs .tab').forEach(b=>b.addEventListener('click',()=>activatePriceTab(b.dataset.cat)));
+$('#priceAcademicLevel')?.addEventListener('change',()=>{
+  const tab=$('.price-tabs .tab.active');
+  if(tab?.dataset.cat==='academic')renderTable('academic');
+});
+$('#priceTable')?.addEventListener('click',e=>{
+  const dest=e.target.closest('[data-price-target]')?.dataset.priceTarget;
+  if(dest)activatePriceTab(dest);
+});
+
+function renderTable(cat){
+  const box=$('#priceTable'),filters=$('#priceFilters'),note=$('#priceTableNote');
+  if(!box)return;
+  const rows=pricing||{};
+  if(filters)filters.hidden=cat!=='academic';
+  if(note)note.textContent=(PRICE_NOTES[cat]||'')+' Seluruh nominal merupakan tarif dasar sebelum biaya express; harga final mengikuti brief dan ketentuan layanan.';
+  let out='';
+  const s=priceText, e=safeText;
+
+  if(cat==='general'){
+    out=priceTable(['Jenjang','Ringan ≤10 hlm','Sedang 11–20 hlm','Kompleks >20 hlm / khusus'],(rows.general||[]).map(x=>[e(x.level),s(x.light),s(x.medium),s(x.complex)]));
+  }else if(cat==='academic'){
+    const level=$('#priceAcademicLevel')?.value||'S1';
+    const academic=rows.academic?.[level]||{};
+    out=priceSectionTitle('BAB & Paket Akademik — '+level)+priceTable(['Bagian / Paket','Kuantitatif','Kualitatif'],Object.entries(academic).map(([name,cost])=>[e(name),s(cost?.quant),s(cost?.qual)]));
+  }else if(cat==='proposal'){
+    out=priceTable(['Jenjang','Harga proposal'],(rows.proposal||[]).map(x=>[e(x.level),s(x.price)]));
+  }else if(cat==='internship'){
+    out=priceTable(['Jenjang','Review & Revisi','Formatting'],(rows.internship||[]).map(x=>[e(x.level),s(x.review),s(x.formatting)]));
+  }else if(cat==='spss'){
+    out=priceSectionTitle('Uji Statistik / SPSS')+priceTable(['Jenis analisis','Harga per layanan'],(rows.spss||[]).map(x=>[e(x.name),s(x.price)]))+
+      priceSectionTitle('Paket SPSS')+priceTable(['Nama paket','Harga paket'],(rows.spssPackages||[]).map(x=>[e(x.name),s(x.price)]));
+  }else if(cat==='qualitative'){
+    out=priceTable(['Layanan NVivo','Harga'],(rows.qualitative||[]).map(x=>[e(x.name),s(x.price,x.suffix||'')]));
+  }else if(cat==='transcript'){
+    out=priceTable(['Durasi audio / video','Harga'],(rows.transcript||[]).map(x=>[e(x.name),s(x.price,x.suffix||'')]));
+  }else if(cat==='formatting'){
+    out=priceTable(['Jenis formatting','D3/D4 & S1','S2','S3'],(rows.formatting||[]).map(x=>[e(x.name),s(x['D3/D4 & S1']),s(x.S2),s(x.S3)]));
+  }else if(cat==='proofreading'){
+    out=priceTable(['Layanan','D3/D4 & S1','S2','S3'],(rows.proofreading||[]).map(x=>[e(x.name),s(x['D3/D4 & S1'],x.suffix||''),s(x.S2,x.suffix||''),s(x.S3,x.suffix||'')]));
+  }else if(cat==='ppt'){
+    out=priceTable(['Jumlah slide','Standard','Premium'],(rows.ppt||[]).map(x=>[e(x.name),s(x.standard,x.suffix||''),s(x.premium,x.suffix||'')]));
+  }else if(cat==='consultation'){
+    out=priceTable(['Durasi / sesi','Harga'],(rows.consultation||[]).map(x=>[e(x.name),s(x.price)]));
+  }else if(cat==='digital'){
+    out=priceTable(['Jenis file / pekerjaan','Harga / acuan'],[
+      ['Word / Google Docs',priceAction('Lihat tarif Umum','general')],
+      ['PDF yang bisa diedit',priceAction('Lihat tarif Umum','general')],
+      ['PDF hasil scan / OCR','Sesuai brief'],
+      ['Excel / Google Sheets','Sesuai brief'],
+      ['Website / HTML-CSS-JS','Sesuai brief'],
+      ['Canva / Desain','Sesuai brief'],
+      ['PPT / Google Slides',priceAction('Lihat tarif PPT','ppt')],
+      ['Aplikasi / file lainnya','Sesuai brief']
+    ]);
+  }else if(cat==='express'){
+    out=priceTable(['Deadline','Tambahan dari harga dasar'],(rows.express||[]).map(x=>[e(x.label),x.surcharge?'+'+Number(x.surcharge)+'%':'Normal (0%)']));
+  }
+  box.innerHTML=out||'<p class="price-empty">Harga untuk kategori ini belum tersedia. Silakan konsultasi.</p>';
+}
 function openModal(id){const el=$('#'+id);if(el){el.classList.add('show');document.body.style.overflow='hidden'}} function closeModal(id){const el=$('#'+id);if(el){el.classList.remove('show');document.body.style.overflow=''}} window.openModal=openModal;window.closeModal=closeModal;$$('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal(m.id)}));
 function wa(msg){msg=msg||'Halo Joki Pelaihari, saya ingin konsultasi.';window.open('https://wa.me/6285651498728?text='+encodeURIComponent(msg),'_blank','noopener')} $$('[data-wa]').forEach(b=>b.addEventListener('click',()=>wa(b.dataset.msg)));if($('#waEstimate'))$('#waEstimate').addEventListener('click',()=>wa($('#waEstimate').dataset.msg));
 const seedTexts=['Formatting-nya rapi dan detail kecilnya diperhatikan.','Komunikasinya jelas, revisi juga cepat ditanggapi.','PPT jadi jauh lebih clean dan enak dipresentasikan.','Olah data dan interpretasinya dibuat lebih gampang dipahami.','Proofreading-nya teliti dan catatan revisinya jelas.','Pengerjaan sesuai brief dan deadline yang disepakati.','Struktur dokumen jadi lebih konsisten dan rapi.','Bantu SPSS dari cleaning sampai interpretasi dengan runtut.','Konsultasi metode sangat membantu ngerapikan arah analisis.','Presentasi dibuat modern tanpa terasa seperti template pasaran.'];

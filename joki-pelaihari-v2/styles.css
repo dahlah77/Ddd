@@ -189,3 +189,29 @@
   .scope-current{display:inline;margin-left:6px}
   #harga .result-price{font-size:clamp(35px,9vw,55px)}
 }
+
+/* Complete Price Table: accessible category filters, detailed service prices */
+.price-tabs{flex-wrap:wrap;overflow:visible;margin-bottom:14px;gap:7px}
+.price-tabs .tab{font-size:13px;padding:9px 13px;transition:background .15s ease,border-color .15s ease}
+.price-tabs .tab:focus-visible,.price-action-link:focus-visible,#priceAcademicLevel:focus-visible{outline:2px solid var(--gold2);outline-offset:3px}
+.price-filters{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0 16px}
+.price-filters label{font-size:12px;color:#c5cfda;letter-spacing:.04em}
+.price-filters .control{max-width:290px;padding:11px 12px}
+.price-table-note{margin:12px 0 0;font-size:12px;line-height:1.7;color:var(--muted)}
+.price-group-label{margin:0;padding:18px 18px 13px;font-size:15px;letter-spacing:.025em;color:var(--gold2)}
+.price-group-label:not(:first-child){margin-top:8px;border-top:1px solid var(--line)}
+.price-action-link{border:0;background:none;text-decoration:underline;text-underline-offset:3px;color:var(--gold2);cursor:pointer;font:inherit;padding:0}
+.price-action-link:hover{color:#ffedbd}
+.price-empty{padding:18px}
+#priceTable{scroll-margin-top:110px}
+#priceTable td,#priceTable th{vertical-align:middle}
+#priceTable td:first-child{min-width:195px}
+#priceTable table:not(:last-child){border-bottom:1px solid var(--line)}
+@media(max-width:640px){
+ .price-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;overscroll-behavior-inline:contain;padding-bottom:12px}
+ .price-tabs .tab{flex-shrink:0}
+ .price-filters .control{max-width:none}
+ .price-filters{align-items:stretch}
+ #priceTable td,#priceTable th{padding:13px 12px}
+ #priceTable td:first-child{min-width:175px}
+}
