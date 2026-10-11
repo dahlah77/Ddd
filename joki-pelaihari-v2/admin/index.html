@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="theme-color" content="#07121d">
+<title>Admin — Joki Pelaihari</title>
+<link rel="stylesheet" href="/admin/admin.css">
+<script src="/admin/admin.js" defer></script></head>
+<body>
+<header class="topbar"><div class="brand"><span class="mark">JP</span><span>JOKI PELAIHARI<small>ADMIN CONSOLE · SINCE 2017</small></span></div>
+<div class="topactions"><a href="/" target="_blank" rel="noopener">Lihat website ↗</a><span id="who"></span><button id="logout" class="outline" hidden>Keluar</button></div></header>
+<main class="shell">
+<section id="loginPanel" class="loginPanel">
+<div class="glass login">
+<p class="eyebrow">AKSES TERBATAS</p><h1>Ruang Admin</h1><p>Masuk hanya dengan akun administrator yang telah diizinkan</p>
+<form id="loginForm"><label for="email">Email admin</label><input id="email" type="email" autocomplete="username" required placeholder="email@domain.com">
+<label for="password">Kata sandi</label><input id="password" type="password" autocomplete="current-password" minlength="8" required>
+<button type="submit" class="gold">Masuk ke dashboard</button></form>
+<p id="loginMsg" role="status"></p><p class="small">Akun administrator dikelola melalui Supabase Auth. Tidak tersedia pendaftaran publik</p>
+</div></section>
+<section id="mainPanel" hidden>
+<div class="headerline"><div><p class="eyebrow">PANEL KONTROL</p><h1 id="pageTitle">Dashboard</h1></div><span id="status" role="status"></span></div>
+<nav class="menu" aria-label="Menu admin">
+<button data-tab="dashboard" class="active">Dashboard</button>
+<button data-tab="orders">Pesanan</button>
+<button data-tab="reviews">Moderasi Review</button>
+<button data-tab="prices">Pengaturan Harga</button>
+<button data-tab="analytics">Analitik</button>
+<button data-tab="audit">Riwayat Perubahan</button>
+</nav>
+<section id="viewDashboard" class="view">
+<div class="stats" id="stats"></div>
+<div class="glass panel"><h2>Pesanan Terbaru</h2><div class="scroll" id="recentOrders"></div></div>
+</section>
+<section id="viewOrders" class="view" hidden>
+<div class="glass panel"><div class="paneltitle"><h2>Manajemen Pesanan</h2><button class="gold" id="toggleNewOrder">+ Pesanan Manual</button></div>
+<form id="newOrderForm" class="form-grid" hidden><label>Nama pelanggan<input name="customer_name" maxlength="120" required></label><label>Jenjang<input name="level" maxlength="50" placeholder="S1"></label><label>Jenis layanan<input name="service" maxlength="120" required></label><label>Deadline<input name="deadline" type="date"></label><label class="full">Kesepakatan<textarea name="kesepakatan" rows="3"></textarea></label><button class="gold">Simpan Pesanan</button></form>
+<div class="scroll" id="ordersTable"></div></div>
+</section>
+<section id="viewReviews" class="view" hidden><div class="glass panel"><h2>Moderasi Review</h2><p class="small">Review baru berstatus pending. Badge terverifikasi hanya boleh untuk pesanan asli yang telah selesai</p><div class="scroll" id="reviewsTable"></div></div></section>
+<section id="viewPrices" class="view" hidden><div class="glass panel">
+<div class="paneltitle"><div><h2>Pengaturan Harga</h2><p class="small">Nominal tersimpan di database dan disinkronkan ke website publik setelah disimpan</p></div><button id="savePrices" class="gold">Simpan Perubahan</button></div>
+<div class="toolbar"><label>Kategori<select id="priceCategory"></select></label><label id="academicLevelWrap" hidden>Jenjang<select id="priceAcademicLevel"><option>D3/D4</option><option selected>S1</option><option>S2</option><option>S3</option></select></label></div>
+<p id="priceNote" class="small"></p><div class="scroll" id="priceEditor"></div></div></section>
+<section id="viewAnalytics" class="view" hidden><div class="glass panel"><h2>Analitik Konversi — 30 Hari</h2><p class="small">Event tanpa informasi identitas pribadi. Vercel Web Analytics masih dapat digunakan untuk statistik pengunjung lengkap</p><div class="stats" id="events"></div><a href="https://vercel.com/hidayatromi358-3418s-projects/joki-pelaihari-v2/analytics" target="_blank" rel="noopener">Buka Vercel Analytics ↗</a></div></section>
+<section id="viewAudit" class="view" hidden><div class="glass panel"><h2>Riwayat Perubahan</h2><div class="scroll" id="auditTable"></div></div></section>
+</section></main>
+<footer>© 2017 Joki Pelaihari · Halaman administrasi privat</footer>
+</body></html>

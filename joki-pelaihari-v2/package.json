@@ -1,0 +1,10 @@
+{
+  "name": "joki-pelaihari-v2",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "description": "Static public site with isolated protected admin functions"
+}

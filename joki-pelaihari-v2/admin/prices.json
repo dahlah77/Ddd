@@ -1,0 +1,540 @@
+{
+  "express": [
+    {
+      "label": "≥4 hari",
+      "multiplier": 1,
+      "surcharge": 0
+    },
+    {
+      "label": "2–3 hari",
+      "multiplier": 1.2,
+      "surcharge": 20
+    },
+    {
+      "label": "24 jam",
+      "multiplier": 1.4,
+      "surcharge": 40
+    },
+    {
+      "label": "12 jam",
+      "multiplier": 1.75,
+      "surcharge": 75
+    },
+    {
+      "label": "<6 jam",
+      "multiplier": 2,
+      "surcharge": 100
+    }
+  ],
+  "general": [
+    {
+      "level": "SD",
+      "light": 40000,
+      "medium": 60000,
+      "complex": 90000
+    },
+    {
+      "level": "SMP",
+      "light": 50000,
+      "medium": 75000,
+      "complex": 115000
+    },
+    {
+      "level": "SMA/SMK",
+      "light": 65000,
+      "medium": 95000,
+      "complex": 145000
+    },
+    {
+      "level": "D3/D4",
+      "light": 80000,
+      "medium": 125000,
+      "complex": 190000
+    },
+    {
+      "level": "S1",
+      "light": 100000,
+      "medium": 150000,
+      "complex": 230000
+    },
+    {
+      "level": "S2",
+      "light": 150000,
+      "medium": 225000,
+      "complex": 350000
+    },
+    {
+      "level": "S3",
+      "light": 200000,
+      "medium": 300000,
+      "complex": 500000
+    }
+  ],
+  "academic": {
+    "D3/D4": {
+      "BAB I": {
+        "quant": 200000,
+        "qual": 200000
+      },
+      "BAB II": {
+        "quant": 225000,
+        "qual": 225000
+      },
+      "BAB III": {
+        "quant": 275000,
+        "qual": 300000
+      },
+      "BAB IV": {
+        "quant": 350000,
+        "qual": 375000
+      },
+      "BAB V": {
+        "quant": 150000,
+        "qual": 150000
+      },
+      "Abstrak ID + EN": {
+        "quant": 60000,
+        "qual": 60000
+      },
+      "Daftar pustaka & sitasi": {
+        "quant": 60000,
+        "qual": 60000
+      },
+      "Formatting keseluruhan": {
+        "quant": 125000,
+        "qual": 125000
+      },
+      "BAB I–III": {
+        "quant": 650000,
+        "qual": 700000
+      },
+      "BAB IV–V": {
+        "quant": 500000,
+        "qual": 525000
+      },
+      "BAB I–V": {
+        "quant": 1050000,
+        "qual": 1150000
+      }
+    },
+    "S1": {
+      "BAB I": {
+        "quant": 250000,
+        "qual": 250000
+      },
+      "BAB II": {
+        "quant": 300000,
+        "qual": 300000
+      },
+      "BAB III": {
+        "quant": 350000,
+        "qual": 400000
+      },
+      "BAB IV": {
+        "quant": 450000,
+        "qual": 500000
+      },
+      "BAB V": {
+        "quant": 200000,
+        "qual": 200000
+      },
+      "Abstrak ID + EN": {
+        "quant": 75000,
+        "qual": 75000
+      },
+      "Daftar pustaka & sitasi": {
+        "quant": 75000,
+        "qual": 75000
+      },
+      "Formatting keseluruhan": {
+        "quant": 150000,
+        "qual": 150000
+      },
+      "BAB I–III": {
+        "quant": 850000,
+        "qual": 950000
+      },
+      "BAB IV–V": {
+        "quant": 650000,
+        "qual": 700000
+      },
+      "BAB I–V": {
+        "quant": 1450000,
+        "qual": 1650000
+      },
+      "Lengkap + format + abstrak": {
+        "quant": 1750000,
+        "qual": 1950000
+      }
+    },
+    "S2": {
+      "BAB I": {
+        "quant": 350000,
+        "qual": 350000
+      },
+      "BAB II": {
+        "quant": 425000,
+        "qual": 425000
+      },
+      "BAB III": {
+        "quant": 500000,
+        "qual": 575000
+      },
+      "BAB IV": {
+        "quant": 650000,
+        "qual": 725000
+      },
+      "BAB V": {
+        "quant": 300000,
+        "qual": 300000
+      },
+      "Abstrak ID + EN": {
+        "quant": 100000,
+        "qual": 100000
+      },
+      "Daftar pustaka & sitasi": {
+        "quant": 100000,
+        "qual": 100000
+      },
+      "Formatting": {
+        "quant": 200000,
+        "qual": 200000
+      },
+      "BAB I–III": {
+        "quant": 1250000,
+        "qual": 1350000
+      },
+      "BAB IV–V": {
+        "quant": 950000,
+        "qual": 1025000
+      },
+      "BAB I–V": {
+        "quant": 1950000,
+        "qual": 2200000
+      }
+    },
+    "S3": {
+      "BAB I": {
+        "quant": 450000,
+        "qual": 450000
+      },
+      "BAB II": {
+        "quant": 550000,
+        "qual": 550000
+      },
+      "BAB III": {
+        "quant": 650000,
+        "qual": 750000
+      },
+      "BAB IV": {
+        "quant": 800000,
+        "qual": 950000
+      },
+      "BAB V": {
+        "quant": 400000,
+        "qual": 400000
+      },
+      "Abstrak ID + EN": {
+        "quant": 125000,
+        "qual": 125000
+      },
+      "Daftar pustaka & sitasi": {
+        "quant": 125000,
+        "qual": 125000
+      },
+      "Formatting": {
+        "quant": 250000,
+        "qual": 250000
+      },
+      "BAB I–III": {
+        "quant": 1650000,
+        "qual": 1850000
+      },
+      "BAB IV–V": {
+        "quant": 1200000,
+        "qual": 1350000
+      },
+      "BAB I–V": {
+        "quant": 2750000,
+        "qual": 3100000
+      }
+    }
+  },
+  "proposal": [
+    {
+      "level": "D3/D4",
+      "price": 300000
+    },
+    {
+      "level": "S1",
+      "price": 375000
+    },
+    {
+      "level": "S2",
+      "price": 500000
+    },
+    {
+      "level": "S3",
+      "price": 650000
+    }
+  ],
+  "internship": [
+    {
+      "level": "SMA/SMK",
+      "review": 150000,
+      "formatting": 75000
+    },
+    {
+      "level": "D3/D4",
+      "review": 200000,
+      "formatting": 100000
+    },
+    {
+      "level": "S1",
+      "review": 250000,
+      "formatting": 125000
+    },
+    {
+      "level": "S2",
+      "review": 325000,
+      "formatting": 150000
+    }
+  ],
+  "spss": [
+    {
+      "name": "Statistik deskriptif",
+      "price": 75000
+    },
+    {
+      "name": "Uji normalitas",
+      "price": 75000
+    },
+    {
+      "name": "Uji homogenitas",
+      "price": 75000
+    },
+    {
+      "name": "Uji linearitas",
+      "price": 110000
+    },
+    {
+      "name": "Korelasi Pearson/Spearman",
+      "price": 150000
+    },
+    {
+      "name": "Independent / Paired t-test",
+      "price": 150000
+    },
+    {
+      "name": "ANOVA One-Way",
+      "price": 220000
+    },
+    {
+      "name": "ANOVA Two-Way",
+      "price": 250000
+    },
+    {
+      "name": "Regresi linear sederhana",
+      "price": 180000
+    },
+    {
+      "name": "Regresi linear berganda",
+      "price": 220000
+    },
+    {
+      "name": "Uji validitas",
+      "price": 180000
+    },
+    {
+      "name": "Uji reliabilitas",
+      "price": 150000
+    },
+    {
+      "name": "Uji asumsi klasik",
+      "price": 150000
+    },
+    {
+      "name": "Chi-Square",
+      "price": 150000
+    }
+  ],
+  "spssPackages": [
+    {
+      "name": "Basic — 3 uji + interpretasi",
+      "price": 375000
+    },
+    {
+      "name": "Standard — 5 uji + interpretasi",
+      "price": 500000
+    },
+    {
+      "name": "Premium — analisis lengkap + interpretasi",
+      "price": 650000
+    }
+  ],
+  "qualitative": [
+    {
+      "name": "NVivo Basic",
+      "price": 300000
+    },
+    {
+      "name": "Coding & kategorisasi",
+      "price": 350000
+    },
+    {
+      "name": "Tema & interpretasi data",
+      "price": 400000
+    },
+    {
+      "name": "Visualisasi (word cloud/model/chart)",
+      "price": 375000
+    },
+    {
+      "name": "Paket lengkap NVivo",
+      "price": 650000,
+      "suffix": "+"
+    }
+  ],
+  "transcript": [
+    {
+      "name": "≤15 menit",
+      "price": 30000
+    },
+    {
+      "name": "16–30 menit",
+      "price": 55000
+    },
+    {
+      "name": "31–45 menit",
+      "price": 80000
+    },
+    {
+      "name": "46–60 menit",
+      "price": 105000
+    },
+    {
+      "name": ">60 menit",
+      "price": 1750,
+      "suffix": " / menit"
+    }
+  ],
+  "formatting": [
+    {
+      "name": "Dokumen ≤100 halaman",
+      "D3/D4 & S1": 125000,
+      "S2": 175000,
+      "S3": 225000
+    },
+    {
+      "name": "Dokumen >100 halaman",
+      "D3/D4 & S1": 150000,
+      "S2": 200000,
+      "S3": 275000
+    },
+    {
+      "name": "Daftar isi otomatis",
+      "D3/D4 & S1": 25000,
+      "S2": 30000,
+      "S3": 35000
+    },
+    {
+      "name": "Daftar tabel/gambar/lampiran",
+      "D3/D4 & S1": 30000,
+      "S2": 35000,
+      "S3": 45000
+    },
+    {
+      "name": "Penomoran halaman kompleks",
+      "D3/D4 & S1": 25000,
+      "S2": 35000,
+      "S3": 45000
+    },
+    {
+      "name": "Paket formatting lengkap",
+      "D3/D4 & S1": 175000,
+      "S2": 250000,
+      "S3": 325000
+    }
+  ],
+  "proofreading": [
+    {
+      "name": "Proofreading Indonesia",
+      "D3/D4 & S1": 12000,
+      "S2": 15000,
+      "S3": 18000,
+      "suffix": "/hlm"
+    },
+    {
+      "name": "Proofreading Inggris",
+      "D3/D4 & S1": 18000,
+      "S2": 22000,
+      "S3": 28000,
+      "suffix": "/hlm"
+    },
+    {
+      "name": "Revisi ringan",
+      "D3/D4 & S1": 75000,
+      "S2": 100000,
+      "S3": 150000
+    },
+    {
+      "name": "Revisi sedang",
+      "D3/D4 & S1": 125000,
+      "S2": 175000,
+      "S3": 250000
+    },
+    {
+      "name": "Revisi berat",
+      "D3/D4 & S1": 200000,
+      "S2": 300000,
+      "S3": 400000,
+      "suffix": "+"
+    }
+  ],
+  "ppt": [
+    {
+      "name": "≤5 slide",
+      "standard": 50000,
+      "premium": 100000
+    },
+    {
+      "name": "6–10 slide",
+      "standard": 75000,
+      "premium": 200000
+    },
+    {
+      "name": "11–15 slide",
+      "standard": 100000,
+      "premium": 250000
+    },
+    {
+      "name": "16–20 slide",
+      "standard": 135000,
+      "premium": 300000
+    },
+    {
+      "name": "Tambahan slide",
+      "standard": 7500,
+      "premium": 15000,
+      "suffix": "/slide"
+    }
+  ],
+  "consultation": [
+    {
+      "name": "30 menit",
+      "price": 75000
+    },
+    {
+      "name": "60 menit",
+      "price": 125000
+    },
+    {
+      "name": "90 menit",
+      "price": 175000
+    },
+    {
+      "name": "Paket 4 sesi × 90 menit",
+      "price": 600000
+    }
+  ]
+}
