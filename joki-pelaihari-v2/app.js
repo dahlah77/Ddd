@@ -4,54 +4,183 @@ const ua=navigator.userAgent,platform=navigator.platform||'';
 const apple=/iPhone|iPad|iPod/.test(ua)||(/Mac/.test(platform)&&navigator.maxTouchPoints<=1)||(platform==='MacIntel'&&navigator.maxTouchPoints>1);
 document.documentElement.dataset.platform=apple?'apple':'universal';
 const pricing=window.__PRICING__||{}, institutions=window.__INSTITUTIONS__||[];
+/* Contextual task guide: keep the explanations inside Smart Price Calculator. */
 const TASK_KINDS={
-  word:{name:'Word / Google Docs',priced:true,light:'≤10 halaman: ketik, format dasar, dokumen sederhana.',medium:'11–20 halaman: tabel, gambar, heading, sitasi.',complex:'>20 halaman atau format khusus: daftar isi otomatis, referensi, banyak tabel.'},
-  pdf:{name:'PDF',priced:true,light:'≤10 halaman: edit, gabung, pisah, konversi PDF sederhana yang bisa diedit.',medium:'11–20 halaman: penataan, perbaikan teks dan format dokumen editable.',complex:'PDF panjang, hasil scan, OCR atau layout rumit memerlukan pengecekan file sebelum harga final.'},
-  excel:{name:'Excel / Google Sheets',priced:false,light:'1–2 sheet: input data, SUM, AVERAGE dan tabel sederhana.',medium:'3–5 sheet: IF, lookup, grafik dan rekap antar-sheet.',complex:'Dashboard, PivotTable, otomatisasi, atau banyak sumber data.'},
-  web:{name:'Website / HTML-CSS-JS',priced:false,light:'Satu halaman statis tanpa database.',medium:'Beberapa halaman responsif dengan navigasi dan formulir sederhana.',complex:'Login, database, dashboard admin, API atau integrasi.'},
-  design:{name:'Canva / Desain',priced:false,light:'Satu poster atau edit template sederhana.',medium:'Beberapa desain dan variasi layout.',complex:'Paket identitas visual atau aset/desain khusus.'},
-  other:{name:'Aplikasi / File lainnya',priced:false,light:'Satu pekerjaan sederhana tanpa fitur khusus.',medium:'Beberapa komponen dengan pengolahan dan revisi.',complex:'Integrasi, banyak komponen, atau fitur teknis khusus.'}
+  word:{
+    name:'Word / Google Docs',priced:true,
+    light:'≤10 halaman; mengetik, merapikan format dasar, atau tulisan sederhana.',
+    medium:'11–20 halaman; tabel, gambar, heading, dan sitasi standar.',
+    complex:'>20 halaman atau format khusus; daftar isi otomatis, banyak tabel dan referensi.',
+    note:'Harga Umum adalah acuan untuk dokumen Word/Docs yang bisa diedit. Format khusus atau kesulitan di luar contoh dikonfirmasi dari brief.'
+  },
+  pdf:{
+    name:'PDF',priced:true,
+    light:'Edit, gabung, pisah, atau konversi PDF sederhana (≤10 halaman) yang bisa diedit.',
+    medium:'11–20 halaman; penataan ulang dan perbaikan dokumen PDF yang bisa diedit.',
+    complex:'PDF hasil scan, banyak halaman, tata letak rumit, atau perlu ekstraksi teks (OCR).',
+    note:'Harga Umum hanya sebagai acuan PDF yang dapat diedit. File scan/OCR dan pekerjaan kompleks perlu pemeriksaan file dan penawaran khusus.'
+  },
+  excel:{
+    name:'Excel / Google Sheets',priced:false,
+    light:'1–2 sheet; input data, tabel, SUM, AVERAGE, atau rumus dasar.',
+    medium:'3–5 sheet; IF, lookup, grafik, dan rekap antar-sheet.',
+    complex:'Dashboard, PivotTable, data besar, otomatisasi, atau banyak sumber data.',
+    note:'Harga dihitung dari jumlah sheet, kerumitan rumus, volume data dan fitur, bukan halaman. Kirim file/brief untuk penawaran.'
+  },
+  web:{
+    name:'Website / HTML-CSS-JS',priced:false,
+    light:'Satu halaman statis dengan teks/gambar, tanpa database.',
+    medium:'Beberapa halaman responsif dengan navigasi dan formulir sederhana.',
+    complex:'Akun/login, database, dashboard admin, API, atau integrasi layanan.',
+    note:'Harga ditentukan oleh jumlah halaman, fitur, desain, integrasi, hosting dan cakupan proyek. Kirim brief untuk penawaran.'
+  },
+  design:{
+    name:'Canva / Desain',priced:false,
+    light:'Satu desain/poster sederhana atau edit template.',
+    medium:'Beberapa desain, variasi layout, dan revisi visual.',
+    complex:'Paket identitas visual, banyak aset, atau desain khusus.',
+    note:'Sampaikan aplikasi, output, jumlah aset, contoh desain, kebutuhan revisi dan deadline untuk penawaran.'
+  },
+  other:{
+    name:'File / aplikasi lainnya',priced:false,
+    light:'Satu pekerjaan sederhana, misalnya mengubah format file atau penyesuaian kecil.',
+    medium:'Beberapa komponen, pengolahan isi dan revisi yang memerlukan beberapa tahap.',
+    complex:'Banyak komponen, otomatisasi, integrasi atau fitur teknis khusus.',
+    note:'Sebutkan format file, aplikasi, tujuan, volume pekerjaan dan hasil yang diinginkan agar tingkat kesulitan serta harga bisa dinilai.'
+  }
 };
 const TASK_LEVELS=[['light','Ringan'],['medium','Sedang'],['complex','Kompleks']];
+const PPT_GUIDE={
+  light:'≤5 slide; layout sederhana.',
+  medium:'6–10 slide; tata letak beragam, diagram, dan visual tambahan.',
+  complex:'11–20 slide; banyak visual/animasi, atau desain premium. >20 slide dihitung sesuai scope.'
+};
+const ACADEMIC_GUIDE={
+  'BAB I':'Pendahuluan: latar belakang masalah, rumusan masalah, tujuan dan manfaat penelitian. Kelengkapan disesuaikan pedoman kampus.',
+  'BAB II':'Landasan teori dan penelitian terdahulu: menyusun alur pembahasan, kerangka pemikiran dan referensi yang relevan.',
+  'BAB III':'Metodologi: pendekatan penelitian, populasi/sampel atau informan, instrumen, pengumpulan data, dan rencana analisis.',
+  'BAB IV':'Hasil dan pembahasan: penyajian temuan, tabel/grafik, interpretasi dan kaitan dengan teori atau referensi.',
+  'BAB V':'Penutup: kesimpulan berdasarkan hasil, keterbatasan, dan saran sesuai ketentuan akademik.',
+  'BAB I–III':'Paket tahap awal: BAB I (pendahuluan), BAB II (teori), dan BAB III (metodologi).',
+  'BAB IV–V':'Paket tahap akhir: BAB IV (hasil dan pembahasan) serta BAB V (kesimpulan dan saran).',
+  'BAB I–V':'Paket BAB I sampai BAB V: cakupan pendahuluan, teori, metode, hasil, dan penutup. Batas revisi mengikuti brief.',
+  'Abstrak ID + EN':'Abstrak Bahasa Indonesia dan Inggris: ringkasan tujuan, metode, temuan, kesimpulan serta kata kunci.',
+  'Daftar pustaka & sitasi':'Meratakan gaya sitasi dan daftar pustaka sesuai pedoman (misalnya APA/Harvard) berdasarkan sumber yang tersedia.',
+  'Formatting keseluruhan':'Merapikan margin, heading, spasi, penomoran, daftar isi, tabel/gambar dan tata letak naskah.',
+  'Formatting':'Merapikan struktur dan tampilan dokumen sesuai template/pedoman kampus.',
+  'Lengkap + format + abstrak':'Paket BAB I–V dengan pemeriksaan format dokumen dan penyusunan abstrak. Detail cakupan mengikuti brief.'
+};
+const safeText=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
 
 function initEstimator(){
   const level=$('#level'),part=$('#part'),method=$('#method'),deadline=$('#deadline');
   const type=$('#fileType'),pptStyle=$('#pptStyle'),hint=$('#taskScopeHelp');
-  if(!level||!part||!method||!deadline||!type)return;
+  if(!level||!part||!method||!deadline||!type||!hint)return;
   level.innerHTML='';
   (pricing.general||[]).forEach(row=>level.add(new Option(row.level,row.level)));
   level.value='S1';
 
   const addOption=(label,source,key)=>part.add(new Option(label,source+'|'+key));
 
-  const updateHelp=()=>{
-    const kind=type.value,source=(part.value||'').split('|')[0],key=(part.value||'').split('|')[1];
-    const meta=TASK_KINDS[kind];
-    if(meta && key in meta){
-      hint.textContent=meta[key]+(meta.priced?' Acuan harga Umum untuk dokumen yang bisa diedit; kondisi dan tingkat kesulitan file tetap dicek.':' Belum ada tarif tetap: kirim brief untuk penawaran.');
-    }else if(kind==='ppt'){
-      hint.textContent='Tarif mengikuti jumlah slide dan paket Standard/Premium pada Price Table. Tambahan slide dan animasi khusus dihitung sesuai scope.';
-    }else{
-      hint.textContent='Pilih bagian pekerjaan. Harga mengikuti daftar layanan dan akan disesuaikan dengan brief.';
+  const renderRows=(descriptions,selected,showSelected=true)=>{
+    return '<div class="scope-levels">'+TASK_LEVELS.map(([key,label])=>
+      '<div class="scope-level '+(showSelected&&selected===key?'is-selected':'')+'">'+
+      '<strong>'+label+(showSelected&&selected===key?' <span class="scope-current">Dipilih</span>':'')+'</strong>'+
+      '<span>'+safeText(descriptions[key])+'</span></div>'
+    ).join('')+'</div>';
+  };
+
+  const describeAcademic=(source,key)=>{
+    if(source==='academic'){
+      const methodSpecific=$('#method')?.value==='qual'?'Kualitatif (wawancara, observasi, tema/penafsiran)':'Kuantitatif (data numerik, variabel, statistik)';
+      return {
+        title:key,
+        detail:ACADEMIC_GUIDE[key]||'Bagian penelitian atau dokumen akademik yang dipilih; cakupan final mengikuti panduan dan brief.',
+        note:'Metode: '+methodSpecific+'. Jenjang: '+level.value+'. Harga mengikuti bagian yang dipilih dan tingkat penanganan.'
+      };
     }
+    if(source==='proposal')return {
+      title:'Proposal penelitian',
+      detail:'Rencana penelitian yang menjelaskan latar belakang, fokus/tujuan, kajian singkat, dan rancangan metode sebelum penelitian dilaksanakan.',
+      note:'Cakupan mengikuti format proposal '+level.value+' dan pedoman lembaga.'
+    };
+    if(source==='internship')return key==='review'?{
+      title:'PKL / Magang — Review & Revisi',
+      detail:'Memeriksa struktur laporan, kejelasan isi, kesesuaian dengan panduan, konsistensi penulisan dan catatan perbaikan.',
+      note:'Perlu file laporan dan aturan kampus/sekolah untuk memastikan cakupan revisi.'
+    }:{
+      title:'PKL / Magang — Formatting',
+      detail:'Merapikan margin, heading, spasi, nomor halaman, daftar isi, tabel/gambar, serta layout laporan PKL atau magang.',
+      note:'Konten laporan tetap mengikuti materi yang diberikan customer.'
+    };
+    if(source==='spssPackage'){
+      const pack=pricing.spssPackages?.[Number(key)];
+      return {
+        title:'SPSS — '+(pack?.name||'Analisis'),
+        detail:Number(key)===0?'Paket Basic: tiga jenis uji statistik dan interpretasi hasil.':Number(key)===1?'Paket Standard: lima jenis uji statistik dan interpretasi hasil.':'Paket Premium: rangkaian analisis statistik yang disesuaikan dengan rancangan dan data penelitian, berikut interpretasi.',
+        note:'Pemilihan uji harus sesuai desain riset, struktur data, dan asumsi statistik. Pengolahan lanjutan di luar paket dikonfirmasi terpisah.'
+      };
+    }
+    return {
+      title:'Layanan akademik lainnya',
+      detail:'Pilih jenis pekerjaan akademik yang dibutuhkan lalu kirim dokumen, pedoman, target hasil, serta deadline.',
+      note:'Harga ditentukan setelah pemeriksaan brief.'
+    };
+  };
+
+  const updateHelp=()=>{
+    const kind=type.value,[source,key]=(part.value||'').split('|');
+    if(TASK_KINDS[kind]){
+      const info=TASK_KINDS[kind];
+      let note=info.note;
+      if(kind==='pdf'&&key==='complex')note+=' PDF scan/OCR tidak dihitung otomatis memakai tarif dokumen biasa.';
+      hint.innerHTML='<div class="scope-header"><strong>'+safeText(info.name)+'</strong><span>Perbandingan tingkat kesulitan</span></div>'+
+        renderRows(info,key)+
+        '<p class="scope-note">'+safeText(note)+'</p>';
+    }else if(kind==='ppt'){
+      const row=source==='ppt'?pricing.ppt?.[Number(key)]:null;
+      const bucket=source!=='ppt'?'complex':Number(key)===0?'light':Number(key)===1?'medium':'complex';
+      const tier=pptStyle?.value==='premium'?'Premium':'Standard';
+      const title=row?row.name:'>20 slide / presentasi khusus';
+      hint.innerHTML='<div class="scope-header"><strong>PPT / Google Slides</strong><span>Contoh klasifikasi</span></div>'+
+        renderRows(PPT_GUIDE,bucket,source==='ppt')+
+        '<p class="scope-note"><strong>Pilihan: '+safeText(title)+' — '+safeText(tier)+'.</strong> Tarif berdasarkan jumlah slide dan paket Standard/Premium pada Price Table. Tambahan slide, animasi khusus atau >20 slide dihitung sesuai scope dan brief.</p>';
+    }else if(kind==='academic'){
+      const a=describeAcademic(source,key);
+      hint.innerHTML='<div class="scope-header"><strong>'+safeText(a.title)+'</strong><span>Penjelasan pekerjaan</span></div>'+
+        '<p class="scope-description">'+safeText(a.detail)+'</p>'+
+        '<p class="scope-note">'+safeText(a.note)+'</p>';
+    }else{
+      hint.textContent='Pilih jenis file atau pekerjaan agar penjelasan lingkupnya muncul di sini.';
+    }
+  };
+
+  const syncMethod=()=>{
+    const source=(part.value||'').split('|')[0];
+    const visible=type.value==='academic'&&source==='academic';
+    const field=$('#methodField');
+    if(field)field.hidden=!visible;
+    method.disabled=!visible;
+    method.title=visible?'Pilih metode penelitian':'Metode hanya untuk bagian penelitian yang memakai metode';
   };
 
   const fill=()=>{
     const kind=type.value,l=level.value;
     part.innerHTML='';
+    const lab=$('#partLabel');
+    if(lab)lab.textContent=kind==='academic'?'Bagian / Jenis Pekerjaan':kind==='ppt'?'Jumlah slide / pekerjaan':'Tingkat kesulitan';
     if(kind==='academic'){
       const academic=pricing.academic?.[l]||{};
       Object.keys(academic).forEach(k=>addOption(k,'academic',k));
-      const prop=(pricing.proposal||[]).find(x=>x.level===l);
-      if(prop)addOption('Proposal Penelitian','proposal','price');
-      const internship=(pricing.internship||[]).find(x=>x.level===l);
-      if(internship){
+      if((pricing.proposal||[]).some(x=>x.level===l))addOption('Proposal Penelitian','proposal','price');
+      if((pricing.internship||[]).some(x=>x.level===l)){
         addOption('PKL / Magang — Review & Revisi','internship','review');
         addOption('PKL / Magang — Formatting','internship','formatting');
       }
       if(['D3/D4','S1','S2','S3'].includes(l)){
         (pricing.spssPackages||[]).forEach((x,i)=>addOption('SPSS — '+x.name,'spssPackage',String(i)));
       }
+      if(part.options.length===0)addOption('Pekerjaan akademik lainnya — Konsultasi','custom','academic');
     }else if(kind==='ppt'){
       (pricing.ppt||[]).forEach((row,i)=>{
         if(row.suffix==='/slide')return;
@@ -59,25 +188,26 @@ function initEstimator(){
       });
       addOption('>20 slide / presentasi khusus — Konsultasi','custom','ppt');
     }else if(TASK_KINDS[kind]){
-      TASK_LEVELS.forEach(([key,label])=>addOption(label+' — '+(kind==='word'||kind==='pdf'?(key==='light'?'≤10 halaman':key==='medium'?'11–20 halaman':'>20 halaman / fitur rumit'):'berdasarkan fitur & volume'),TASK_KINDS[kind].priced?'general':'custom',key));
+      TASK_LEVELS.forEach(([key,label])=>{
+        const volume=(kind==='word'||kind==='pdf')
+          ?(key==='light'?'≤10 halaman':key==='medium'?'11–20 halaman':'>20 halaman / fitur rumit')
+          :'berdasarkan fitur & volume';
+        addOption(label+' — '+volume,TASK_KINDS[kind].priced?'general':'custom',key);
+      });
     }
     if(part.options.length)part.selectedIndex=0;
-    $('#pptStyleField').hidden=kind!=='ppt';
-    $('#methodField').hidden=kind!=='academic';
+    const field=$('#pptStyleField');
+    if(field)field.hidden=kind!=='ppt';
     syncMethod();
     updateHelp();
     calc();
   };
-  const syncMethod=()=>{
-    const source=(part.value||'').split('|')[0],isAcademic=type.value==='academic'&&source==='academic';
-    method.disabled=!isAcademic;
-    method.title=isAcademic?'Pilih metode penelitian':'Metode hanya diperlukan untuk pekerjaan akademik';
-  };
+
   level.addEventListener('change',fill);
   type.addEventListener('change',fill);
   part.addEventListener('change',()=>{syncMethod();updateHelp();calc()});
-  pptStyle?.addEventListener('change',calc);
-  method.addEventListener('change',calc);
+  pptStyle?.addEventListener('change',()=>{updateHelp();calc()});
+  method.addEventListener('change',()=>{updateHelp();calc()});
   deadline.addEventListener('change',calc);
   fill();
 }
@@ -87,6 +217,8 @@ function getEstimatorBase(){
   const [source,key]=($('#part')?.value||'').split('|');
   const method=$('#method')?.value||'quant';
   if(source==='general' && TASK_KINDS[kind]?.priced){
+    // Scanned/complex PDF needs a custom quote, not a generic page-rate estimate.
+    if(kind==='pdf' && key==='complex')return null;
     const row=(pricing.general||[]).find(x=>x.level===l);
     return row?Number(row[key]):null;
   }
@@ -121,7 +253,7 @@ function calc(){
 }
 
 $$('.tab').forEach(b=>b.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderTable(b.dataset.cat)}));
-function renderTable(cat){const box=$('#priceTable');if(!box)return;const guide=$('#taskGuide');if(guide)guide.hidden=cat!=='general';let rows='',head='';if(cat==='general'){head='<tr><th>Jenjang</th><th>Ringan<br>≤10 hlm</th><th>Sedang<br>11–20 hlm</th><th>Kompleks<br>>20 hlm / khusus</th></tr>';rows=(pricing.general||[]).map(x=>'<tr><td>'+x.level+'</td><td>'+fmt(x.light)+'</td><td>'+fmt(x.medium)+'</td><td>'+fmt(x.complex)+'</td></tr>').join('')}else if(cat==='spss'){head='<tr><th>Jenis analisis</th><th>Harga</th></tr>';rows=(pricing.spss||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+'</td></tr>').join('')}else if(cat==='qualitative'){head='<tr><th>Layanan</th><th>Harga</th></tr>';rows=(pricing.qualitative||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+(x.suffix||'')+'</td></tr>').join('')}else if(cat==='transcript'){head='<tr><th>Durasi</th><th>Harga</th></tr>';rows=(pricing.transcript||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+(x.suffix||'')+'</td></tr>').join('')}else if(cat==='ppt'){head='<tr><th>Paket</th><th>Standard</th><th>Premium</th></tr>';rows=(pricing.ppt||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.standard)+(x.suffix||'')+'</td><td>'+fmt(x.premium)+(x.suffix||'')+'</td></tr>').join('')}else{head='<tr><th>Durasi</th><th>Harga</th></tr>';rows=(pricing.consultation||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+'</td></tr>').join('')}box.innerHTML='<table><thead>'+head+'</thead><tbody>'+rows+'</tbody></table>'}
+function renderTable(cat){const box=$('#priceTable');if(!box)return;let rows='',head='';if(cat==='general'){head='<tr><th>Jenjang</th><th>Ringan<br>≤10 hlm</th><th>Sedang<br>11–20 hlm</th><th>Kompleks<br>>20 hlm / khusus</th></tr>';rows=(pricing.general||[]).map(x=>'<tr><td>'+x.level+'</td><td>'+fmt(x.light)+'</td><td>'+fmt(x.medium)+'</td><td>'+fmt(x.complex)+'</td></tr>').join('')}else if(cat==='spss'){head='<tr><th>Jenis analisis</th><th>Harga</th></tr>';rows=(pricing.spss||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+'</td></tr>').join('')}else if(cat==='qualitative'){head='<tr><th>Layanan</th><th>Harga</th></tr>';rows=(pricing.qualitative||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+(x.suffix||'')+'</td></tr>').join('')}else if(cat==='transcript'){head='<tr><th>Durasi</th><th>Harga</th></tr>';rows=(pricing.transcript||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+(x.suffix||'')+'</td></tr>').join('')}else if(cat==='ppt'){head='<tr><th>Paket</th><th>Standard</th><th>Premium</th></tr>';rows=(pricing.ppt||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.standard)+(x.suffix||'')+'</td><td>'+fmt(x.premium)+(x.suffix||'')+'</td></tr>').join('')}else{head='<tr><th>Durasi</th><th>Harga</th></tr>';rows=(pricing.consultation||[]).map(x=>'<tr><td>'+x.name+'</td><td>'+fmt(x.price)+'</td></tr>').join('')}box.innerHTML='<table><thead>'+head+'</thead><tbody>'+rows+'</tbody></table>'}
 function openModal(id){const el=$('#'+id);if(el){el.classList.add('show');document.body.style.overflow='hidden'}} function closeModal(id){const el=$('#'+id);if(el){el.classList.remove('show');document.body.style.overflow=''}} window.openModal=openModal;window.closeModal=closeModal;$$('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal(m.id)}));
 function wa(msg){msg=msg||'Halo Joki Pelaihari, saya ingin konsultasi.';window.open('https://wa.me/6285651498728?text='+encodeURIComponent(msg),'_blank','noopener')} $$('[data-wa]').forEach(b=>b.addEventListener('click',()=>wa(b.dataset.msg)));if($('#waEstimate'))$('#waEstimate').addEventListener('click',()=>wa($('#waEstimate').dataset.msg));
 const seedTexts=['Formatting-nya rapi dan detail kecilnya diperhatikan.','Komunikasinya jelas, revisi juga cepat ditanggapi.','PPT jadi jauh lebih clean dan enak dipresentasikan.','Olah data dan interpretasinya dibuat lebih gampang dipahami.','Proofreading-nya teliti dan catatan revisinya jelas.','Pengerjaan sesuai brief dan deadline yang disepakati.','Struktur dokumen jadi lebih konsisten dan rapi.','Bantu SPSS dari cleaning sampai interpretasi dengan runtut.','Konsultasi metode sangat membantu ngerapikan arah analisis.','Presentasi dibuat modern tanpa terasa seperti template pasaran.'];
