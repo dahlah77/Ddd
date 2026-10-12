@@ -112,15 +112,24 @@ async function showMfa(step){
  }
 }
 async function initialize(){
- try{const d=await api({action:'session'});loggedIn(d.user);}
- catch(e){
-  if(e.status===403&&e.data?.mfa_required){
-   try{await showMfa(e.data.step)}catch(err){$('#mfaPanel').hidden=true;$('#loginPanel').hidden=false;}
-  }else{
-   $('#loginPanel').hidden=false;$('#mainPanel').hidden=true;
-   $('#loginMsg').textContent=e.message.includes('Database')?'Database admin belum diaktifkan. Halaman sudah siap tetapi login menunggu konfigurasi Supabase':'';
+ let error;
+ // A temporary network/DB error must not force the user back to login
+ for(let attempt=0;attempt<2;attempt++){
+  try{const d=await api({action:'session'});loggedIn(d.user);return;}
+  catch(e){
+   error=e;
+   if(e.status!==503 && e.status!==500 && e.status!==502 && e.status!==504)break;
   }
  }
+ if(error?.status===403&&error.data?.mfa_required){
+  try{await showMfa(error.data.step);return;}
+  catch(e){$('#mfaPanel').hidden=true;error=e;}
+ }
+ $('#loginPanel').hidden=false;$('#mainPanel').hidden=true;
+ if(!error?.status||error.status>=500)
+  $('#loginMsg').textContent='Sesi belum dapat diperiksa karena koneksi server Silakan muat ulang tanpa mengisi sandi lagi';
+ else
+  $('#loginMsg').textContent='';
 }
 $('#loginForm').addEventListener('submit',async e=>{
  e.preventDefault();const btn=$('#loginForm button');btn.disabled=true;

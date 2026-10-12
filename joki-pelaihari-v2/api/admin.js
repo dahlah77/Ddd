@@ -81,13 +81,14 @@ export default async function handler(req,res){
    }
    return send(res,404,{error:'Aksi MFA tidak tersedia'});
   }
-  const user=await authorize(req,res);
-  if(!user){
-   const pending=await preMfaAdmin(req,res);
-   if(pending)return send(res,403,{error:'Verifikasi MFA diperlukan',mfa_required:true,
-    step:pending.factors.some(f=>f.status==='verified')?'challenge':'enroll'});
-   return send(res,401,{error:'Login admin diperlukan'});
-  }
+  // Resolve cookies/refresh tokens exactly ONCE per request to avoid
+  // racing against Supabase refresh-token rotation
+  const active=await preMfaAdmin(req,res);
+  if(!active)return send(res,401,{error:'Login admin diperlukan'});
+  if(active.aal!=='aal2')
+   return send(res,403,{error:'Verifikasi MFA diperlukan',mfa_required:true,
+    step:active.factors.some(f=>f.status==='verified')?'challenge':'enroll'});
+  const user={id:active.id,email:active.email,role:active.role};
 
   if(action==='session'){
    if(req.method!=='GET')return send(res,405,{error:methods});

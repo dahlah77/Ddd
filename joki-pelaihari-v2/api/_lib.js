@@ -42,10 +42,15 @@ export const payload=(req,max=16000)=>{
 export const readCookies=req=>Object.fromEntries((req.headers.cookie||'').split(';').map(x=>x.trim()).filter(Boolean).map(x=>{const i=x.indexOf('=');return [x.slice(0,i),x.slice(i+1)];}));
 const cookie=(key,val,age)=>key+'='+encodeURIComponent(val)+'; Path=/; HttpOnly; Secure; SameSite=Strict; '+(age?'Max-Age='+age:'Max-Age=0');
 export const writeSession=(res,tokens)=>{
- res.setHeader('Set-Cookie',[
-  cookie('__Host-jp-access',tokens.access_token,Math.min(Math.max(Number(tokens.expires_in)||3600,300),7200)),
-  cookie('__Host-jp-refresh',tokens.refresh_token,7*24*3600)
- ]);
+ if(!tokens || typeof tokens.access_token!=='string' || !tokens.access_token.startsWith('eyJ'))
+  throw Object.assign(new Error('Token login tidak valid'),{status:401});
+ // MFA verification responses and token refreshes may differ in shape
+ // Never write the literal word "undefined" as a refresh cookie
+ const cookies=[cookie('__Host-jp-access',tokens.access_token,
+   Math.min(Math.max(Number(tokens.expires_in)||3600,300),7200))];
+ if(typeof tokens.refresh_token==='string' && tokens.refresh_token.length>12)
+  cookies.push(cookie('__Host-jp-refresh',tokens.refresh_token,7*24*3600));
+ res.setHeader('Set-Cookie',cookies);
 };
 export const clearSession=res=>res.setHeader('Set-Cookie',[cookie('__Host-jp-access','',0),cookie('__Host-jp-refresh','',0)]);
 export async function supa(path,{method='GET',body,token,service=false,query}={}){
@@ -96,22 +101,47 @@ export function getAal(token){
 }
 export async function preMfaAdmin(req,res){
  const cookies=readCookies(req);
- let at;try{at=decodeURIComponent(cookies['__Host-jp-access']||'');}catch{}
- let user=null;
- if(at){try{user=await supa('/auth/v1/user',{token:at});}catch{}}
- if(!user){
-  let rt;try{rt=decodeURIComponent(cookies['__Host-jp-refresh']||'');}catch{}
-  if(!rt){clearSession(res);return null;}
-  try{
-   const tokens=await supa('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:{refresh_token:rt}});
-   at=tokens.access_token;
-   user=await supa('/auth/v1/user',{token:at});
-   writeSession(res,tokens);
-  }catch{clearSession(res);return null;}
+ let access='',refresh='';
+ try{
+  access=decodeURIComponent(cookies['__Host-jp-access']||'');
+  refresh=decodeURIComponent(cookies['__Host-jp-refresh']||'');
+ }catch{
+  return null;
  }
+ if(!access && !refresh)return null;
+ let user=null;
+ if(access){
+  try{
+   user=await supa('/auth/v1/user',{token:access});
+  }catch(e){
+   // 5xx / timeout is transient: do not delete a valid session or
+   // interpret a network outage as a password logout
+   if(e.status!==401 && e.status!==403)throw e;
+  }
+ }
+ if(!user && refresh){
+  let tokens;
+  try{
+   tokens=await supa('/auth/v1/token?grant_type=refresh_token',{
+    method:'POST',body:{refresh_token:refresh}
+   });
+  }catch(e){
+   // Another concurrent request may already have rotated the refresh token
+   // Never clear the newer cookies from the response of a stale request
+   if(e.status===401 || e.status===403)return null;
+   throw e;
+  }
+  if(!tokens?.access_token)return null;
+  access=tokens.access_token;
+  // Validate refreshed session BEFORE writing replacement cookies
+  user=await supa('/auth/v1/user',{token:access});
+  writeSession(res,tokens);
+ }
+ if(!user)return null;
  const role=await adminRole(user);
- if(!role){clearSession(res);return null;}
- return {id:user.id,email:user.email,role,token:at,aal:getAal(at),factors:Array.isArray(user.factors)?user.factors:[]};
+ if(!role)return null;
+ return {id:user.id,email:user.email,role,token:access,aal:getAal(access),
+  factors:Array.isArray(user.factors)?user.factors:[]};
 }
 export async function authorize(req,res){
  const user=await preMfaAdmin(req,res);
