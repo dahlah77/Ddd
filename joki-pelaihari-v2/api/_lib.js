@@ -40,7 +40,7 @@ export const payload=(req,max=16000)=>{
  return body;
 };
 export const readCookies=req=>Object.fromEntries((req.headers.cookie||'').split(';').map(x=>x.trim()).filter(Boolean).map(x=>{const i=x.indexOf('=');return [x.slice(0,i),x.slice(i+1)];}));
-const cookie=(key,val,age)=>key+'='+encodeURIComponent(val)+'; Path=/; HttpOnly; Secure; SameSite=Strict; '+(age?'Max-Age='+age:'Max-Age=0');
+const cookie=(key,val,age)=>key+'='+encodeURIComponent(val)+'; Path=/; HttpOnly; Secure; SameSite=Lax; '+(age?'Max-Age='+age:'Max-Age=0');
 export const writeSession=(res,tokens)=>{
  if(!tokens || typeof tokens.access_token!=='string' || !tokens.access_token.startsWith('eyJ'))
   throw Object.assign(new Error('Token login tidak valid'),{status:401});
