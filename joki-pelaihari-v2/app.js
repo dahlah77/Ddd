@@ -357,7 +357,7 @@ let reviewsExpanded=false;
 function loadReviews(){
   let own=[];
   try{own=JSON.parse(localStorage.getItem(reviewKey)||'[]')}catch(e){}
-  const all=jpStore.enabled?jpStore.approved.slice():own.slice().reverse().concat(seedReviews);
+  const all=jpStore.enabled?jpStore.approved.slice().concat(seedReviews):own.slice().reverse().concat(seedReviews);
   const grid=$('#reviewGrid'),toggle=$('#reviewToggle');
   if(!grid)return;
   const visible=reviewsExpanded?all:all.slice(0,6);
