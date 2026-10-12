@@ -1,4 +1,4 @@
-import {createHmac} from 'node:crypto';
+import {createHmac,createHash} from 'node:crypto';
 import {isIP} from 'node:net';
 
 const hasServiceCredential=()=>{
@@ -81,7 +81,20 @@ export async function adminRole(user){
 export const validOrderStatus=new Set(['baru','diproses','revisi','selesai','dibatalkan']);
 export const validPaymentStatus=new Set(['belum_bayar','dp','lunas']);
 export const validReviewStatus=new Set(['pending','approved','rejected']);
-export async function authorize(req,res){
+export async function passwordLeaked(password){
+ const hash=createHash('sha1').update(password).digest('hex').toUpperCase();
+ let response;
+ try{response=await fetch('https://api.pwnedpasswords.com/range/'+hash.slice(0,5),
+  {headers:{'Add-Padding':'true'},signal:AbortSignal.timeout(5000)});}
+ catch{throw Object.assign(new Error('Pemeriksaan keamanan sandi gagal sementara'),{status:503});}
+ if(!response.ok)throw Object.assign(new Error('Pemeriksaan keamanan sandi gagal sementara'),{status:503});
+ const data=await response.text();
+ return data.split(/\r?\n/).some(x=>x.slice(0,35)===hash.slice(5)&&x[35]===':'&&Number(x.slice(36))>0);
+}
+export function getAal(token){
+ try{return JSON.parse(Buffer.from(token.split('.')[1],'base64url').toString('utf8')).aal||'aal1'}catch{return 'aal1'}
+}
+export async function preMfaAdmin(req,res){
  const cookies=readCookies(req);
  let at;try{at=decodeURIComponent(cookies['__Host-jp-access']||'');}catch{}
  let user=null;
@@ -98,6 +111,11 @@ export async function authorize(req,res){
  }
  const role=await adminRole(user);
  if(!role){clearSession(res);return null;}
+ return {id:user.id,email:user.email,role,token:at,aal:getAal(at),factors:Array.isArray(user.factors)?user.factors:[]};
+}
+export async function authorize(req,res){
+ const user=await preMfaAdmin(req,res);
+ if(!user||user.aal!=='aal2')return null;
  return {id:user.id,email:user.email,role};
 }
 async function consumeRateLimit(scope,max,seconds){

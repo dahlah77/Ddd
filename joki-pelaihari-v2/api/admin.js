@@ -1,4 +1,4 @@
-import {configured,send,payload,sameOrigin,supa,db,allowlisted,adminRole,authorize,writeSession,clearSession,rateLimit,rateLimitIdentity,audit,fail,str,uuid,validOrderStatus,validPaymentStatus,validReviewStatus} from './_lib.js';
+import {configured,send,payload,sameOrigin,supa,db,allowlisted,adminRole,authorize,writeSession,clearSession,rateLimit,rateLimitIdentity,passwordLeaked,preMfaAdmin,getAal,audit,fail,str,uuid,validOrderStatus,validPaymentStatus,validReviewStatus} from './_lib.js';
 
 const methods='GET, POST, PATCH';
 export default async function handler(req,res){
@@ -18,6 +18,8 @@ export default async function handler(req,res){
    // Also throttle the target account across many IPs to limit password spraying
    if(!await rateLimitIdentity(email,'admin-login',30,3600))
      return send(res,429,{error:'Terlalu banyak percobaan login'});
+   if(await passwordLeaked(password))
+     return send(res,403,{error:'Kata sandi terdeteksi dalam daftar kebocoran Ganti kata sandi di Supabase sebelum login'});
    let tokens,user;
    try{
     tokens=await supa('/auth/v1/token?grant_type=password',{method:'POST',body:{email,password}});
@@ -28,18 +30,64 @@ export default async function handler(req,res){
    const role=await adminRole(user);
    if(!role)return send(res,403,{error:'Akun ini tidak mempunyai izin administrator'});
    writeSession(res,tokens);
-   await audit(user.id,'login','session',null);
-   return send(res,200,{ok:true,user:{email:user.email,role}});
+   await audit(user.id,'password_login','session',null);
+   const verified=(user.factors||[]).some(f=>f.factor_type==='totp'&&f.status==='verified');
+   return send(res,200,{ok:true,mfa_required:true,step:verified?'challenge':'enroll'});
   }
   if(action==='logout'){
    if(req.method!=='POST')return send(res,405,{error:methods});
-   const who=await authorize(req,res);
+   const who=await preMfaAdmin(req,res);
    if(who)await audit(who.id,'logout','session',null);
    clearSession(res);
    return send(res,200,{ok:true});
   }
+  if(action.startsWith('mfa_')){
+   const first=await preMfaAdmin(req,res);
+   if(!first)return send(res,401,{error:'Sesi awal sudah berakhir Silakan login ulang'});
+   if(action==='mfa_state'&&req.method==='GET'){
+    const verified=first.factors.find(f=>f.factor_type==='totp'&&f.status==='verified');
+    return send(res,200,{step:first.aal==='aal2'?'complete':verified?'challenge':'enroll'});
+   }
+   if(action==='mfa_factor'&&req.method==='GET'){
+    const verified=first.factors.find(f=>f.factor_type==='totp'&&f.status==='verified');
+    return verified?send(res,200,{factor_id:verified.id}):send(res,404,{error:'Autentikator belum terdaftar'});
+   }
+   if(req.method!=='POST')return send(res,405,{error:'Metode tidak tersedia'});
+   if(!await rateLimit(req,'admin-mfa',15,3600)||
+      !await rateLimitIdentity(first.email,'admin-mfa',25,3600))
+     return send(res,429,{error:'Batas percobaan verifikasi tercapai'});
+   if(action==='mfa_enroll'){
+    if(first.factors.some(f=>f.status==='verified'))return send(res,409,{error:'Autentikator sudah aktif'});
+    if(first.factors.filter(f=>f.status==='unverified').length>=3)return send(res,429,{error:'Terlalu banyak pengaturan MFA tertunda'});
+    const data=await supa('/auth/v1/factors',{method:'POST',token:first.token,body:{factor_type:'totp',friendly_name:'Joki Pelaihari Admin'}});
+    return send(res,200,{factor_id:data.id,qr_code:data.totp?.qr_code||'',secret:data.totp?.secret||''});
+   }
+   if(action==='mfa_verify'){
+    const body=payload(req,1000),factor=str(body.factor_id,80),code=str(body.code,8);
+    if(!uuid(factor)||!/^\d{6}$/.test(code))return send(res,400,{error:'Kode enam digit tidak valid'});
+    let updated;
+    try{
+     const challenge=await supa('/auth/v1/factors/'+factor+'/challenge',{method:'POST',token:first.token,body:{}});
+     updated=await supa('/auth/v1/factors/'+factor+'/verify',{method:'POST',token:first.token,body:{challenge_id:challenge.id,code}});
+    }catch{return send(res,401,{error:'Kode autentikator salah atau kedaluwarsa'});}
+    if(!updated?.access_token||getAal(updated.access_token)!=='aal2')
+      return send(res,403,{error:'Verifikasi MFA belum lengkap'});
+    const user=await supa('/auth/v1/user',{token:updated.access_token});
+    const role=await adminRole(user);
+    if(!role)return send(res,403,{error:'Akun bukan administrator'});
+    writeSession(res,updated);
+    await audit(user.id,'mfa_login','session',null);
+    return send(res,200,{ok:true,user:{email:user.email,role}});
+   }
+   return send(res,404,{error:'Aksi MFA tidak tersedia'});
+  }
   const user=await authorize(req,res);
-  if(!user)return send(res,401,{error:'Login admin diperlukan'});
+  if(!user){
+   const pending=await preMfaAdmin(req,res);
+   if(pending)return send(res,403,{error:'Verifikasi MFA diperlukan',mfa_required:true,
+    step:pending.factors.some(f=>f.status==='verified')?'challenge':'enroll'});
+   return send(res,401,{error:'Login admin diperlukan'});
+  }
 
   if(action==='session'){
    if(req.method!=='GET')return send(res,405,{error:methods});

@@ -2,7 +2,7 @@
 const $=q=>document.querySelector(q);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
 const fmt=v=>'Rp'+new Intl.NumberFormat('id-ID',{maximumFractionDigits:0}).format(Number(v)||0);
-const app={user:null,tab:'dashboard',rows:{},prices:null,priceVersion:0,configured:false};
+const app={user:null,tab:'dashboard',rows:{},prices:null,priceVersion:0,configured:false,mfaFactorId:null};
 const categories=[['general','Umum'],['academic','BAB Akademik'],['proposal','Proposal'],['internship','PKL / Magang'],['spss','SPSS'],['spssPackages','Paket SPSS'],['qualitative','NVivo'],['transcript','Transkrip'],['formatting','Formatting'],['proofreading','Proofreading'],['ppt','PPT'],['consultation','Konsultasi'],['express','Express']];
 
 async function api(query={},options={}){
@@ -10,14 +10,14 @@ async function api(query={},options={}){
  for(const [k,v] of Object.entries(query))url.searchParams.set(k,v);
  const r=await fetch(url,{...options,credentials:'same-origin',cache:'no-store',headers:{'Content-Type':'application/json',...(options.headers||{})}});
  let data={};try{data=await r.json();}catch{}
- if(!r.ok)throw Error(data.error||'Permintaan gagal ('+r.status+')');
+ if(!r.ok){const e=Error(data.error||'Permintaan gagal ('+r.status+')');e.status=r.status;e.data=data;throw e;}
  return data;
 }
 function note(message){$('#status').textContent=message;setTimeout(()=>{if($('#status').textContent===message)$('#status').textContent=''},6500)}
 function failure(e){note(e.message||'Gagal memproses permintaan')}
 function loggedIn(user){
  app.user=user;$('#who').textContent=user.email+' · '+user.role;
- $('#loginPanel').hidden=true;$('#mainPanel').hidden=false;$('#logout').hidden=false;
+ $('#loginPanel').hidden=true;$('#mfaPanel').hidden=true;$('#mainPanel').hidden=false;$('#logout').hidden=false;
  $('[data-tab="audit"]').hidden=user.role!=='owner';
  $('#savePrices').disabled=user.role!=='owner';
  show('dashboard');
@@ -97,16 +97,68 @@ function renderPrices(){
  }).join('')+'</tr>').join('');
  $('#priceEditor').innerHTML='<table><thead><tr>'+th+'</tr></thead><tbody>'+body+'</tbody></table>';
 }
+async function showMfa(step){
+ $('#loginPanel').hidden=true;$('#mainPanel').hidden=true;$('#mfaPanel').hidden=false;
+ $('#mfaMessage').textContent='';$('#mfaCode').value='';$('#mfaSetup').hidden=true;
+ app.mfaFactorId=null;
+ const enroll=step==='enroll';
+ $('#mfaEnroll').hidden=!enroll;
+ $('#mfaIntro').textContent=enroll
+  ?'Aktifkan aplikasi autentikator untuk membuka dashboard'
+  :'Masukkan kode 6 digit dari aplikasi autentikator untuk masuk';
+ if(!enroll){
+  const d=await api({action:'mfa_factor'});
+  app.mfaFactorId=d.factor_id;
+ }
+}
 async function initialize(){
  try{const d=await api({action:'session'});loggedIn(d.user);}
- catch(e){$('#loginPanel').hidden=false;$('#mainPanel').hidden=true;$('#loginMsg').textContent=e.message.includes('Database')?'Database admin belum diaktifkan. Halaman sudah siap tetapi login menunggu konfigurasi Supabase':'';}
+ catch(e){
+  if(e.status===403&&e.data?.mfa_required){
+   try{await showMfa(e.data.step)}catch(err){$('#mfaPanel').hidden=true;$('#loginPanel').hidden=false;}
+  }else{
+   $('#loginPanel').hidden=false;$('#mainPanel').hidden=true;
+   $('#loginMsg').textContent=e.message.includes('Database')?'Database admin belum diaktifkan. Halaman sudah siap tetapi login menunggu konfigurasi Supabase':'';
+  }
+ }
 }
 $('#loginForm').addEventListener('submit',async e=>{
  e.preventDefault();const btn=$('#loginForm button');btn.disabled=true;
  try{
   const d=await api({action:'login'},{method:'POST',body:JSON.stringify({email:$('#email').value,password:$('#password').value})});
-  $('#password').value='';$('#loginMsg').textContent='';loggedIn(d.user);
+  $('#password').value='';$('#loginMsg').textContent='';if(d.mfa_required)await showMfa(d.step);else loggedIn(d.user);
  }catch(err){$('#loginMsg').textContent=err.message}finally{btn.disabled=false}
+});
+$('#mfaEnroll').addEventListener('click',async()=>{
+ const btn=$('#mfaEnroll');btn.disabled=true;
+ try{
+  const d=await api({action:'mfa_enroll'},{method:'POST',body:'{}'});
+  app.mfaFactorId=d.factor_id;
+  const qr=String(d.qr_code||'');
+  const src=qr.startsWith('data:image/svg+xml,')?qr:
+    qr.startsWith('<svg')?'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(qr):'';
+  $('#mfaQr').hidden=!src;
+  if(src)$('#mfaQr').src=src;
+  $('#mfaSecret').textContent=d.secret||'';
+  $('#mfaSetup').hidden=false;btn.hidden=true;
+ }catch(e){$('#mfaMessage').textContent=e.message}
+ finally{btn.disabled=false}
+});
+$('#mfaForm').addEventListener('submit',async e=>{
+ e.preventDefault();const button=$('#mfaForm button');button.disabled=true;
+ try{
+  if(!app.mfaFactorId)throw Error('Autentikator belum dipilih atau diaktifkan');
+  const d=await api({action:'mfa_verify'},{method:'POST',
+   body:JSON.stringify({factor_id:app.mfaFactorId,code:$('#mfaCode').value.trim()})});
+  $('#mfaCode').value='';$('#mfaSecret').textContent='';
+  $('#mfaQr').removeAttribute('src');$('#mfaPanel').hidden=true;
+  loggedIn(d.user);
+ }catch(e){$('#mfaMessage').textContent=e.message}
+ finally{button.disabled=false}
+});
+$('#mfaCancel').addEventListener('click',async()=>{
+ try{await api({action:'logout'},{method:'POST',body:'{}'})}catch{}
+ location.reload();
 });
 $('#logout').addEventListener('click',async()=>{try{await api({action:'logout'},{method:'POST',body:'{}'})}catch{}location.reload()});
 document.querySelectorAll('.menu button').forEach(b=>b.addEventListener('click',()=>show(b.dataset.tab)));

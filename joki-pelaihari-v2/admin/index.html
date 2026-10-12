@@ -17,6 +17,23 @@
 <button type="submit" class="gold">Masuk ke dashboard</button></form>
 <p id="loginMsg" role="status"></p><p class="small">Akun administrator dikelola melalui Supabase Auth. Tidak tersedia pendaftaran publik</p>
 </div></section>
+<section id="mfaPanel" class="loginPanel" hidden>
+<div class="glass login">
+<p class="eyebrow">KEAMANAN ADMIN</p><h1>Verifikasi 2 Langkah</h1>
+<p id="mfaIntro">Masukkan kode dari aplikasi autentikator</p>
+<button id="mfaEnroll" class="gold" type="button" hidden>Aktifkan Autentikator</button>
+<div id="mfaSetup" hidden>
+<p class="small">Pindai QR dengan aplikasi autentikator di ponsel, atau masukkan kunci secara manual</p>
+<img id="mfaQr" alt="Kode QR autentikator" width="200" height="200">
+<p class="small">Kunci: <code id="mfaSecret"></code></p>
+</div>
+<form id="mfaForm"><label for="mfaCode">Kode autentikator</label>
+<input id="mfaCode" type="text" inputmode="numeric" autocomplete="one-time-code"
+pattern="[0-9]{6}" maxlength="6" required>
+<button type="submit" class="gold">Verifikasi &amp; Masuk</button></form>
+<p id="mfaMessage" role="status"></p>
+<button id="mfaCancel" class="outline" type="button">Batalkan Login</button>
+</div></section>
 <section id="mainPanel" hidden>
 <div class="headerline"><div><p class="eyebrow">PANEL KONTROL</p><h1 id="pageTitle">Dashboard</h1></div><span id="status" role="status"></span></div>
 <nav class="menu" aria-label="Menu admin">
