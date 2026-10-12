@@ -1,6 +1,11 @@
 import {createHmac} from 'node:crypto';
 
-export const configured=()=>Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_PUBLISHABLE_KEY && process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.JP_ADMIN_EMAILS);
+const hasServiceCredential=()=>{
+ const key=process.env.SUPABASE_SERVICE_ROLE_KEY||'';
+ return (key.startsWith('sb_secret_') && key.length>=35)
+     || (key.startsWith('eyJ') && key.split('.').length===3 && key.length>100);
+};
+export const configured=()=>Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_PUBLISHABLE_KEY && process.env.JP_ADMIN_EMAILS && hasServiceCredential());
 const cfg=()=>({
  url:(process.env.SUPABASE_URL||'').replace(/\/+$/,''),
  pub:process.env.SUPABASE_PUBLISHABLE_KEY||'',
