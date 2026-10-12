@@ -269,7 +269,7 @@ const PRICE_NOTES={
   digital:'Belum tersedia harga tetap untuk jenis pekerjaan digital ini Kirim file atau rincian fitur, volume, output dan deadline untuk mendapatkan penawaran',
   express:'Biaya express adalah persentase tambahan terhadap harga dasar yang relevan, tergantung ketersediaan slot pengerjaan'
 };
-const priceText=(value,suffix='')=>value===null||value===undefined?'Sesuai kesepakatan':fmt(value)+suffix;
+const priceText=(value,suffix='')=>value===null||value===undefined?'Sesuai kesepakatan':fmt(value)+safeText(suffix);
 const priceTable=(headings,rows)=>'<table><thead><tr>'+headings.map(x=>'<th>'+safeText(x)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(cols=>'<tr>'+cols.map(v=>'<td>'+v+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
 const priceSectionTitle=name=>'<h3 class="price-group-label">'+safeText(name)+'</h3>';
 const priceAction=(name,cat)=>'<button type="button" class="price-action-link" data-price-target="'+safeText(cat)+'">'+safeText(name)+'</button>';

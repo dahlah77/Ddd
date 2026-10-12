@@ -1,4 +1,4 @@
-import {configured,send,payload,sameOrigin,supa,db,allowlisted,adminRole,authorize,writeSession,clearSession,rateLimit,audit,fail,str,uuid,validOrderStatus,validPaymentStatus,validReviewStatus} from './_lib.js';
+import {configured,send,payload,sameOrigin,supa,db,allowlisted,adminRole,authorize,writeSession,clearSession,rateLimit,rateLimitIdentity,audit,fail,str,uuid,validOrderStatus,validPaymentStatus,validReviewStatus} from './_lib.js';
 
 const methods='GET, POST, PATCH';
 export default async function handler(req,res){
@@ -15,6 +15,9 @@ export default async function handler(req,res){
    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||typeof password!=='string'||password.length<8||password.length>128)
      return send(res,400,{error:'Email atau kata sandi tidak valid'});
    if(!await rateLimit(req,'admin-login',8,3600))return send(res,429,{error:'Terlalu banyak percobaan login'});
+   // Also throttle the target account across many IPs to limit password spraying
+   if(!await rateLimitIdentity(email,'admin-login',30,3600))
+     return send(res,429,{error:'Terlalu banyak percobaan login'});
    let tokens,user;
    try{
     tokens=await supa('/auth/v1/token?grant_type=password',{method:'POST',body:{email,password}});

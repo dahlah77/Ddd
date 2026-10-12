@@ -1,4 +1,5 @@
 import {createHmac} from 'node:crypto';
+import {isIP} from 'node:net';
 
 const hasServiceCredential=()=>{
  const key=process.env.SUPABASE_SERVICE_ROLE_KEY||'';
@@ -20,11 +21,18 @@ export const str=(s,max=300)=>typeof s==='string'?s.trim().slice(0,max):'';
 export const uuid=x=>typeof x==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(x);
 export const sameOrigin=req=>{
  const origin=req.headers.origin;
- if(!origin)return false;
- try{const u=new URL(origin);return u.protocol==='https:' && u.host===req.headers.host;}catch{return false;}
+ if(typeof origin!=='string'||origin.length>300)return false;
+ // Browser submissions must originate from this exact HTTPS origin
+ if(req.headers['sec-fetch-site'] && req.headers['sec-fetch-site']!=='same-origin')return false;
+ try{
+  const u=new URL(origin);
+  const host=String(req.headers.host||'').toLowerCase();
+  return u.protocol==='https:' && u.username==='' && u.password==='' &&
+         u.host.toLowerCase()===host && u.pathname==='/' && !u.search && !u.hash;
+ }catch{return false;}
 };
 export const payload=(req,max=16000)=>{
- if(!String(req.headers['content-type']||'').startsWith('application/json'))throw Object.assign(new Error('JSON diperlukan'),{status:415});
+ if(!/^application\/json(?:\s*;|\s*$)/i.test(String(req.headers['content-type']||'')))throw Object.assign(new Error('JSON diperlukan'),{status:415});
  const size=Number(req.headers['content-length']||0);
  if(size>max)throw Object.assign(new Error('Data terlalu besar'),{status:413});
  const body=req.body;
@@ -92,11 +100,26 @@ export async function authorize(req,res){
  if(!role){clearSession(res);return null;}
  return {id:user.id,email:user.email,role};
 }
-export async function rateLimit(req,action,max,seconds){
- const raw=(req.headers['x-forwarded-for']||req.headers['x-real-ip']||'').split(',')[0].trim().slice(0,80);
- const hash=createHmac('sha256',process.env.SUPABASE_SERVICE_ROLE_KEY).update(action+':'+raw).digest('hex');
- const data=await supa('/rest/v1/rpc/jp_consume_rate_limit',{method:'POST',body:{p_key:hash,p_max:max,p_seconds:seconds},service:true});
+async function consumeRateLimit(scope,max,seconds){
+ const hash=createHmac('sha256',process.env.SUPABASE_SERVICE_ROLE_KEY)
+  .update(scope).digest('hex');
+ const data=await supa('/rest/v1/rpc/jp_consume_rate_limit',{
+  method:'POST',body:{p_key:hash,p_max:max,p_seconds:seconds},service:true
+ });
  return data===true;
+}
+export async function rateLimit(req,action,max,seconds){
+ // Prefer the last IP inserted by the trusted proxy, not a spoofable
+ // leftmost X-Forwarded-For entry supplied by an upstream client
+ const forwarded=String(req.headers['x-forwarded-for']||'')
+  .split(',').map(ip=>ip.trim()).filter(ip=>isIP(ip));
+ const real=String(req.headers['x-real-ip']||'').trim();
+ const ip=forwarded.at(-1)||(isIP(real)?real:'unknown');
+ return consumeRateLimit('ip:'+action+':'+ip,max,seconds);
+}
+export async function rateLimitIdentity(identity,action,max,seconds){
+ const value=String(identity||'').trim().toLowerCase().slice(0,254);
+ return consumeRateLimit('account:'+action+':'+value,max,seconds);
 }
 export async function audit(actor,action,entity,entityId){
  try{await db('jp_audit_logs',{method:'POST',body:{actor_id:actor,action,entity,entity_id:entityId||null}});}catch{}
