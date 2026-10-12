@@ -40,7 +40,13 @@ export async function supa(path,{method='GET',body,token,service=false,query}={}
  if(!configured())throw Object.assign(new Error('Database belum dikonfigurasi'),{status:503});
  const p=path.startsWith('/')?path:'/'+path;
  const url=c.url+p+(query?'?'+new URLSearchParams(query).toString():'');
- const headers={apikey:service?c.secret:c.pub,Authorization:'Bearer '+(token||(service?c.secret:c.pub))};
+ const apiKey=service?c.secret:c.pub;
+ const headers={apikey:apiKey};
+ // Modern Supabase sb_secret_ / sb_publishable_ keys are not JWTs:
+ // send them in apikey only. Authorization is reserved for signed-in user JWTs
+ // or legacy service_role/anon JWT keys.
+ if(token)headers.Authorization='Bearer '+token;
+ else if(apiKey.startsWith('eyJ'))headers.Authorization='Bearer '+apiKey;
  if(body!==undefined)headers['Content-Type']='application/json';
  if(service)headers.Prefer='return=representation';
  let r;
