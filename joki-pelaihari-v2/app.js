@@ -348,7 +348,7 @@ function openInstagram(msg){
   if(msg && navigator.clipboard?.writeText)navigator.clipboard.writeText(msg).catch(()=>{});
   window.open('https://www.instagram.com/joki_pelaihari/','_blank','noopener');
 }
-$('[data-instagram]').forEach(b=>b.addEventListener('click',()=>openInstagram(b.dataset.msg)));
+$$('[data-instagram]').forEach(b=>b.addEventListener('click',()=>openInstagram(b.dataset.msg)));
 if($('#igEstimate'))$('#igEstimate').addEventListener('click',()=>openInstagram($('#igEstimate').dataset.msg));
 const seedTexts=['Formatting-nya rapi dan detail kecilnya diperhatikan','Komunikasinya jelas, revisi juga cepat ditanggapi','PPT jadi jauh lebih clean dan enak dipresentasikan','Olah data dan interpretasinya dibuat lebih gampang dipahami','Proofreading-nya teliti dan catatan revisinya jelas','Pengerjaan sesuai kesepakatan dan deadline yang disepakati','Struktur dokumen jadi lebih konsisten dan rapi','Bantu SPSS dari cleaning sampai interpretasi dengan runtut','Konsultasi metode sangat membantu ngerapikan arah analisis','Presentasi dibuat modern tanpa terasa seperti template pasaran'];
 const services=['Formatting','Konsultasi','PPT Akademik','SPSS & Analisis Data','Proofreading','Revisi Dokumen'];
