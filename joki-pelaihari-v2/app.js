@@ -243,12 +243,12 @@ function calc(){
   if($('#express'))$('#express').textContent=known?(ex.surcharge?'+'+ex.surcharge+'%':'Normal'):'Dikonfirmasi';
   if($('#total'))$('#total').textContent=known?fmt(total):'Konsultasi';
   if($('#calcNote'))$('#calcNote').textContent=known?(ex.surcharge?'Express '+ex.label+' termasuk dalam estimasi':'Estimasi harga dasar; deadline normal ≥4 hari'):'Belum ada tarif tetap untuk pekerjaan ini Kirim detail file, fitur, volume, dan deadline untuk mendapatkan harga';
-  if($('#waEstimate')){
+  if($('#igEstimate')){
     const detail=['Halo Joki Pelaihari, saya ingin konsultasi','','Jenjang: '+level,'Jenis file / platform: '+($('#fileType')?.options[$('#fileType').selectedIndex]?.text||kind),'Tingkat / pekerjaan: '+label];
     if(kind==='academic' && ($('#part')?.value||'').startsWith('academic|'))detail.push('Metode: '+(method==='quant'?'Kuantitatif':'Kualitatif'));
     if(kind==='ppt')detail.push('Paket desain: '+($('#pptStyle')?.value||'standard'));
     detail.push('Deadline: '+ex.label,'Estimasi: '+(known?fmt(total):'Mohon penawaran sesuai kesepakatan'));
-    $('#waEstimate').dataset.msg=detail.join('\n');
+    $('#igEstimate').dataset.msg=detail.join('\n');
   }
 }
 
@@ -344,7 +344,12 @@ function renderTable(cat){
   box.innerHTML=out||'<p class="price-empty">Harga untuk kategori ini belum tersedia Silakan konsultasi</p>';
 }
 function openModal(id){const el=$('#'+id);if(el){el.classList.add('show');document.body.style.overflow='hidden'}} function closeModal(id){const el=$('#'+id);if(el){el.classList.remove('show');document.body.style.overflow=''}} window.openModal=openModal;window.closeModal=closeModal;$$('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal(m.id)}));
-function wa(msg){msg=msg||'Halo Joki Pelaihari, saya ingin konsultasi';window.open('https://wa.me/6285651498728?text='+encodeURIComponent(msg),'_blank','noopener')} $$('[data-wa]').forEach(b=>b.addEventListener('click',()=>wa(b.dataset.msg)));if($('#waEstimate'))$('#waEstimate').addEventListener('click',()=>wa($('#waEstimate').dataset.msg));
+function openInstagram(msg){
+  if(msg && navigator.clipboard?.writeText)navigator.clipboard.writeText(msg).catch(()=>{});
+  window.open('https://www.instagram.com/joki_pelaihari/','_blank','noopener');
+}
+$('[data-instagram]').forEach(b=>b.addEventListener('click',()=>openInstagram(b.dataset.msg)));
+if($('#igEstimate'))$('#igEstimate').addEventListener('click',()=>openInstagram($('#igEstimate').dataset.msg));
 const seedTexts=['Formatting-nya rapi dan detail kecilnya diperhatikan','Komunikasinya jelas, revisi juga cepat ditanggapi','PPT jadi jauh lebih clean dan enak dipresentasikan','Olah data dan interpretasinya dibuat lebih gampang dipahami','Proofreading-nya teliti dan catatan revisinya jelas','Pengerjaan sesuai kesepakatan dan deadline yang disepakati','Struktur dokumen jadi lebih konsisten dan rapi','Bantu SPSS dari cleaning sampai interpretasi dengan runtut','Konsultasi metode sangat membantu ngerapikan arah analisis','Presentasi dibuat modern tanpa terasa seperti template pasaran'];
 const services=['Formatting','Konsultasi','PPT Akademik','SPSS & Analisis Data','Proofreading','Revisi Dokumen'];
 const seedReviews=institutions.slice(0,30).map((x,i)=>({name:['A•••','R•••','N•••','D•••','M•••'][i%5],institution:x[0],level:(x[1]||'S1').split('/')[0],service:services[i%services.length],rating:[5,4,5,5,4][i%5],text:seedTexts[i%seedTexts.length]}));
