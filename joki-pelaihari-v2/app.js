@@ -423,6 +423,6 @@ if($('#orderForm'))$('#orderForm').addEventListener('submit',e=>{
  const order={code:id,name:fd.get('name'),level:fd.get('level'),service:fd.get('service'),deadline:fd.get('deadline'),kesepakatan:fd.get('kesepakatan')};
  const msg='Halo Joki Pelaihari, saya ingin membuat order\n\nOrder ID: '+id+'\nNama: '+order.name+'\nJenjang: '+order.level+'\nLayanan: '+order.service+'\nDeadline: '+order.deadline+'\n\nKesepakatan: '+order.kesepakatan;
  if(jpStore.enabled)jpJson('/api/public?resource=orders',order).catch(e=>console.warn('Simpan pesanan gagal',e.message));
- closeModal('orderModal');wa(msg);
+ closeModal('orderModal');openInstagram(msg);
 });
 initEstimator();renderTable('general');loadReviews();syncPersistent();
